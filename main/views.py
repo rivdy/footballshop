@@ -1,8 +1,9 @@
 from django.shortcuts import render
 
 def show_home(request):
-    return render(request, "home.html", {
-        "app_name": "Garuda Merah Putih Football Shop",
-        "student_name": "Rivaldy Putra Rivly",
-        "student_class": "PBP B",
-    })
+    context = {
+        "app_name": "Garuda Football Shop",  # ganti tema kecilmu
+        "student_name": "Rivaldy Putra Rivly",  # ganti sesuai
+        "student_class": "PBP A",               # ganti sesuai
+    }
+    return render(request, "home.html", context)
