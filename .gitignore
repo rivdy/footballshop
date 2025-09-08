@@ -1,3 +1,35 @@
-.env*
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django
+*.log
 db.sqlite3
+media/
+staticfiles/
+
+# Virtual env
 env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Secrets / env var
+.env
+.env.*
+!.env.example
+
+# Tools/Cache
+.tox/
+.pytest_cache/
+.coverage
+coverage.xml
+
+# IDE/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
