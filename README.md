@@ -19,15 +19,13 @@
    Menulis penjelasan langkah, bagan alur MVT, peran `settings.py`, migrasi, alasan memakai Django, dan feedback asdos.
 
 ## 2) Bagan request–response & kaitan berkas (MVT)
-Request (Browser): GET /
- └─ project: footballshop/urls.py
-     └─ include('main.urls')
-         └─ app: main/urls.py
-             └─ path('', show_home)
-                 └─ view: main/views.py::show_home
-                     ├─ (opsional) query main/models.py::Product
-                     └─ render('home.html', context)
-                         └─ template: main/templates/home.html
+- Browser mengirim GET /
+- project: footballshop/urls.py → include('main.urls')
+- app: main/urls.py → path('', show_home)
+- view: main/views.py::show_home
+  - (opsional) ambil data dari main/models.py::Product
+  - render('home.html', context)
+- template: main/templates/home.html → HTML response ke browser
 
 **Penjelasan singkat:** Saat pengguna membuka `http://.../`, browser mengirim permintaan **GET** ke path root (`/`). Django di level proyek (`footballshop/urls.py`) meneruskan URL root ke URL milik app `main` (`include('main.urls')`). Di level app (`main/urls.py`), pola `''` memetakan request ke fungsi **`show_home`**. View tersebut menyiapkan **context** (dan bila perlu membaca **Model** `Product`) lalu me-render **`home.html`**. Hasil render dikirim kembali ke browser sebagai **response** (HTML) sehingga halaman tampil.
 
