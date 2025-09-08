@@ -9,7 +9,7 @@ class Product(models.Model):
         ('others', 'Lainnya'),
     ]
 
-    # 6 atribut wajib
+    # --- 6 atribut wajib ---
     name        = models.CharField(max_length=200)
     price       = models.IntegerField()
     description = models.TextField()
@@ -17,7 +17,6 @@ class Product(models.Model):
     category    = models.CharField(max_length=30, choices=CATEGORY_CHOICES)
     is_featured = models.BooleanField(default=False)
 
-    # opsional (boleh dihapus/ubah, tidak mempengaruhi penilaian wajib)
     stock  = models.PositiveIntegerField(default=0)
     brand  = models.CharField(max_length=100, blank=True)
     rating = models.FloatField(default=0.0)
