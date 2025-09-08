@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-2g6w+er$29hr!y6k699x-oka+n$92ffkvg*^(e%n9i+s^nwy_7
 DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1",
-                 "rivaldy-putra-footballnews.pbp.cs.ui.ac.id"]
+                 "https://pbp.cs.ui.ac.id/rivaldy.putra/footballshop"]
 
 
 # Application definition
