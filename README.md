@@ -49,4 +49,4 @@ Perubahan pada `models.py` dibuatkan **file migrasi** oleh `makemigrations`. Eks
 - **Produktif**: cepat menghasilkan aplikasi berjalan tanpa banyak konfigurasi awal.
 
 ## (6) Feedback untuk Asdos Tutorial 1
-- (Tulis masukanmu sendiri; contoh) Penjelasan MVT & routing jelas. Akan lebih mantap jika ditambah sesi debug error umum (TemplateDoesNotExist, DisallowedHost) dan praktik unit test singkat.
+- Semoga lebih baik lagi dan bisa bekerja dengan baik disemester ini. Semoga ada komunikasi baik antara asdos dan saya agar memahami materi dan mendapat nilai terbaik.
