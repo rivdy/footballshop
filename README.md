@@ -19,3 +19,31 @@
    Menulis penjelasan langkah, bagan alur MVT, peran `settings.py`, migrasi, alasan memakai Django, dan feedback asdos.
 
 ## 2) Bagan request–response & kaitan berkas (MVT)
+Browser (GET /)
+↓
+footballshop/urls.py → include('main.urls')
+↓
+main/urls.py → path('', show_home)
+↓
+main/views.py::show_home
+├─ (opsional) ambil data dari main/models.py::Product
+└─ render('home.html', context)
+↓
+main/templates/home.html → HTML dikirim kembali (Response)
+
+**Kaitan berkas:** `urls.py` memetakan URL ke view; `views.py` menyiapkan logika & context; `models.py` menyimpan/ambil data; template `.html` menyajikan tampilan.
+
+## (3) Peran `settings.py`
+Pusat konfigurasi proyek: `INSTALLED_APPS`, `MIDDLEWARE`, `TEMPLATES`, `DATABASES` (via env var untuk dev/prod), `ALLOWED_HOSTS`, konfigurasi berkas statis, zona waktu/bahasa, dan integrasi pihak ketiga. Dengan memisahkan konfigurasi dari kode, proyek konsisten berjalan di lingkungan berbeda (lokal vs produksi).
+
+## (4) Cara kerja migrasi database
+Perubahan pada `models.py` dibuatkan **file migrasi** oleh `makemigrations`. Eksekusi migrasi ke DB dilakukan oleh `migrate` untuk membuat/mengubah tabel/kolom secara bertahap. Django menyimpan riwayat migrasi sehingga mudah dilacak dan di-*rollback* jika perlu.
+
+## (5) Mengapa Django cocok untuk permulaan?
+- **Batteries-included** (ORM, templating, admin, form, autentikasi, proteksi CSRF/XSS).
+- **Struktur MVT jelas**, membantu memahami alur request → view → template.
+- **Dokumentasi & komunitas besar**, stabil, dipakai luas di industri.
+- **Produktif**: cepat menghasilkan aplikasi berjalan tanpa banyak konfigurasi awal.
+
+## (6) Feedback untuk Asdos Tutorial 1
+- (Tulis masukanmu sendiri; contoh) Penjelasan MVT & routing jelas. Akan lebih mantap jika ditambah sesi debug error umum (TemplateDoesNotExist, DisallowedHost) dan praktik unit test singkat.
