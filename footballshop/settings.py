@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-2g6w+er$29hr!y6k699x-oka+n$92ffkvg*^(e%n9i+s^nwy_7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "rivaldy-putra-footballshop.pbp.cs.ui.ac.id"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "rivaldy-putra-footballnews.pbp.cs.ui.ac.id"]
 
 # Application definition
 
@@ -73,9 +73,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'footballshop.wsgi.application'
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://pbp.cs.ui.ac.id/rivaldy.putra/footballshop"
-]
+CSRF_TRUSTED_ORIGINS = ["https://rivaldy-putra-footballnews.pbp.cs.ui.ac.id"]
+
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
