@@ -12,10 +12,12 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from dotenv import load_dotenv
 load_dotenv()
+from pathlib import Path
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 DEBUG = not PRODUCTION
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"] # saat deploy tambahkan: ALLOWED_HOSTS += ["<username-sso>-footballshop.pbp.cs.ui.ac.id"]
-from pathlib import Path
+
+CSRF_TRUSTED_ORIGINS = ["https://rivaldy-putra-footballshop.pbp.cs.ui.ac.id"]
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -73,7 +75,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'footballshop.wsgi.application'
 
-CSRF_TRUSTED_ORIGINS = ["https://rivaldy-putra-footballshop.pbp.cs.ui.ac.id"]
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
