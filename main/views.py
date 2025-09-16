@@ -27,7 +27,7 @@ def create_product(request):
         form = ProductForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("main:product_list")
+            return redirect("main:home")
     else:
         form = ProductForm()
     return render(request, "create_news.html", {"form": form})

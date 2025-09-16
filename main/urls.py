@@ -12,12 +12,9 @@ from .views import (
 app_name = "main"
 
 urlpatterns = [
-    path("", show_products, name="home"),                # <-- ini yang hilang
-    path("products/", show_products, name="product_list"),
+    path("", show_products, name="home"),
     path("add/", create_product, name="create_product"),
     path("product/<int:pk>/", product_detail, name="product_detail"),
-
-    # Endpoints untuk Postman
     path("json/", show_json, name="json"),
     path("json/<int:id>/", show_json_by_id, name="json_by_id"),
     path("xml/", show_xml, name="xml"),
