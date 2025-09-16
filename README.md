@@ -123,7 +123,6 @@ Secara umum, JSON lebih baik digunakan untuk aplikasi modern karena:
 XML masih unggul untuk dokumen yang membutuhkan validasi struktur kompleks, tetapi JSON lebih populer karena ringan dan sesuai kebutuhan integrasi aplikasi saat ini.
 # Football Shop
 
-
 ### Halaman Home
 ![Home](assets/img/ss-home.png)
 
