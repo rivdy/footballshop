@@ -106,7 +106,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("main.urls")),
 ]
-
+```
 ## 🧩 Jawaban Pertanyaan Teori
 
 ### 1. Mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
@@ -121,29 +121,20 @@ Secara umum, JSON lebih baik digunakan untuk aplikasi modern karena:
 - Native di JavaScript sehingga cocok untuk web dan REST API.
 
 XML masih unggul untuk dokumen yang membutuhkan validasi struktur kompleks, tetapi JSON lebih populer karena ringan dan sesuai kebutuhan integrasi aplikasi saat ini.
-## Football Shop
+# Football Shop
 
 ### Halaman Home
-![Home](assets/img/ss-home.png)
-
+![Home](https://raw.githubusercontent.com/rivdy/footballshop/master/assets/img/ss-home.png)
 ### Data XML
-![XML](assets/img/ss-xml.png)
+![XML](https://raw.githubusercontent.com/rivdy/footballshop/master/assets/img/ss-xml.png)
 
 ### Data JSON Deploy
-![JSON Deploy](assets/img/ss-json-deploy.png)
+![JSON Deploy](https://raw.githubusercontent.com/rivdy/footballshop/master/assets/img/ss-json-deploy.png)
 
-<!-- Fallback HTML (opsional) kalau mau atur ukuran) -->
-<!--
-<p>
-  <img src="assets/img/ss-home.png" alt="Home" width="800" />
-</p>
-<p>
-  <img src="assets/img/ss-xml.png" alt="XML" width="800" />
-</p>
-<p>
-  <img src="assets/img/ss-json-deploy.png" alt="JSON Deploy" width="800" />
-</p>
--->
+
+
+
+
 ---
 
 ### 3. Jelaskan fungsi dari method `is_valid()` pada form Django dan mengapa kita membutuhkan method tersebut?
