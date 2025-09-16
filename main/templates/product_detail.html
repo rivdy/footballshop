@@ -1,11 +1,37 @@
 {% extends "base.html" %}
+{% block title %}{{ product.name }} — Garuda Football Shop{% endblock %}
 {% block content %}
-  <h3>{{ product.name }}</h3>
-  <p><b>Harga:</b> Rp {{ product.price }}</p>
-  <p><b>Kategori:</b> {{ product.get_category_display }}</p>
-  <p><b>Featured:</b> {{ product.is_featured }}</p>
-  {% if product.thumbnail %}
-    <img src="{{ product.thumbnail }}" alt="thumb" width="280">
-  {% endif %}
-  <p style="white-space:pre-wrap">{{ product.description }}</p>
+
+<article class="card">
+  <div class="row">
+    {% if product.thumbnail %}
+      <img class="thumb" style="width:180px;height:180px" src="{{ product.thumbnail }}" alt="{{ product.name }}">
+    {% else %}
+      <img class="thumb" style="width:180px;height:180px" src="https://placehold.co/360x360/0e0e16/8b5cf6?text=No+Image" alt="No image">
+    {% endif %}
+
+    <div style="flex:1">
+      <h2 class="title" style="font-size:26px">{{ product.name }}</h2>
+      <p class="meta" style="margin-bottom:12px">
+        <span class="badge">{{ product.get_category_display|default:product.category }}</span>
+        {% if product.is_featured %}&nbsp;<span class="badge featured">FEATURED</span>{% endif %}
+      </p>
+
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div class="price" style="font-size:22px">Rp {{ product.price|intcomma }}</div>
+        {% if product.created_at %}
+          <div style="color:var(--muted);font-size:13px">Ditambahkan {{ product.created_at|date:"d M Y, H:i" }}</div>
+        {% endif %}
+      </div>
+
+      <p style="color:#d6d7df;line-height:1.65">{{ product.description|linebreaksbr }}</p>
+
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <a class="btn" href="{% url 'main:home' %}">← Kembali</a>
+        <a class="btn btn-primary" href="{% url 'main:create_product' %}">+ Tambah Produk</a>
+      </div>
+    </div>
+  </div>
+</article>
+
 {% endblock %}
