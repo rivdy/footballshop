@@ -10,9 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
-from dotenv import load_dotenv
-load_dotenv()
 from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 DEBUG = not PRODUCTION
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "rivaldy-putra-footballshop.pbp.cs.ui.ac.id"]
@@ -107,7 +106,28 @@ else:
 LANGUAGE_CODE = 'id'
 TIME_ZONE = 'Asia/Jakarta'
 
+SQLITE = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
 
+# Jika pakai Postgres lewat env, isi di sini (opsional)
+if os.getenv("DJANGO_DB_NAME"):
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("DJANGO_DB_NAME"),
+            "USER": os.getenv("DJANGO_DB_USER"),
+            "PASSWORD": os.getenv("DJANGO_DB_PASSWORD"),
+            "HOST": os.getenv("DJANGO_DB_HOST"),
+            "PORT": os.getenv("DJANGO_DB_PORT", "5432"),
+            "OPTIONS": {"options": "-c search_path=public"},
+        }
+    }
+else:
+    DATABASES = SQLITE 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
