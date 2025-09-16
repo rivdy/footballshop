@@ -124,17 +124,14 @@ XML masih unggul untuk dokumen yang membutuhkan validasi struktur kompleks, teta
 # Football Shop
 
 
-<p align="center">
-  <img src="assets/img/ss-home.png" alt="Halaman Utama" width="700">
-</p>
+### Halaman Home
+![Home](assets/img/ss-home.png)
 
-<p align="center">
-  <img src="assets/img/ss-list.png" alt="Daftar Produk" width="700">
-</p>
+### Data XML
+![XML](assets/img/ss-xml.png)
 
-<p align="center">
-  <img src="assets/img/ss-deploy.png" alt="Status Deploy PWS" width="700">
-</p>
+### Data JSON Deploy
+![JSON Deploy](assets/img/ss-json-deploy.png)
 
 ---
 
