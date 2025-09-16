@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+  {% if not products %}
+    <p>Belum ada produk.</p>
+  {% else %}
+    {% for p in products %}
+      <div class="card">
+        <h3 style="margin:0 0 8px 0">{{ p.name }} — Rp {{ p.price }}</h3>
+        <p style="margin:0 0 8px 0"><i>{{ p.get_category_display }}</i>
+           {% if p.is_featured %} • <b>Featured</b>{% endif %}</p>
+        <a class="button" href="{% url 'main:product_detail' p.pk %}">Detail</a>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endblock %}

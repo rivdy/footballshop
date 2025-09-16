@@ -59,7 +59,7 @@ ROOT_URLCONF = 'footballshop.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'], # Tambahkan konten baris ini
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,7 +73,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'footballshop.wsgi.application'
 
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://pbp.cs.ui.ac.id/rivaldy.putra/footballshop"
+]
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 

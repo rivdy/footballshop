@@ -2,6 +2,6 @@
 gunicorn
 whitenoise
 psycopg2-binary
-python-dotenv
 requests
 urllib3
+python-dotenv

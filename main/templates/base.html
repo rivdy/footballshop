@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ app_name|default:"Football Shop" }}</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:920px;margin:24px auto;padding:0 16px}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    a.button, button{padding:8px 12px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;text-decoration:none}
+    .card{border:1px solid #eee;padding:12px;border-radius:12px;margin:8px 0}
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h2 style="margin:0">{{ app_name|default:"Football Shop" }}</h2>
+      <small>{{ student_name }} — {{ student_class }}</small>
+    </div>
+    <nav>
+      <a class="button" href="{% url 'main:product_list' %}">Home</a>
+      <a class="button" href="{% url 'main:product_add' %}">+ Add</a>
+    </nav>
+  </header>
+
+  {% block content %}{% endblock %}
+</body>
+</html>
