@@ -121,10 +121,21 @@ Secara umum, JSON lebih baik digunakan untuk aplikasi modern karena:
 - Native di JavaScript sehingga cocok untuk web dan REST API.
 
 XML masih unggul untuk dokumen yang membutuhkan validasi struktur kompleks, tetapi JSON lebih populer karena ringan dan sesuai kebutuhan integrasi aplikasi saat ini.
+# Football Shop
 
-"C:\Users\Acer\OneDrive\Gambar\Screenshot\Screenshot 2025-09-16 125940.png"
-"C:\Users\Acer\OneDrive\Gambar\Screenshot\Screenshot 2025-09-16 125906.png"
-"C:\Users\Acer\OneDrive\Gambar\Screenshot\Screenshot 2025-09-16 125858.png"
+
+<p align="center">
+  <img src="assets/img/ss-home.png" alt="Halaman Utama" width="700">
+</p>
+
+<p align="center">
+  <img src="assets/img/ss-list.png" alt="Daftar Produk" width="700">
+</p>
+
+<p align="center">
+  <img src="assets/img/ss-deploy.png" alt="Status Deploy PWS" width="700">
+</p>
+
 ---
 
 ### 3. Jelaskan fungsi dari method `is_valid()` pada form Django dan mengapa kita membutuhkan method tersebut?
