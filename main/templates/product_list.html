@@ -1,15 +1,33 @@
 {% extends "base.html" %}
+{% block title %}Daftar Produk — Garuda Football Shop{% endblock %}
 {% block content %}
-  {% if not products %}
-    <p>Belum ada produk.</p>
-  {% else %}
+
+{% if not products %}
+  <div class="empty">Belum ada produk. Klik <b>+ Add</b> di kanan atas untuk menambahkan.</div>
+{% else %}
+  <div class="grid">
     {% for p in products %}
-      <div class="card">
-        <h3 style="margin:0 0 8px 0">{{ p.name }} — Rp {{ p.price }}</h3>
-        <p style="margin:0 0 8px 0"><i>{{ p.get_category_display }}</i>
-           {% if p.is_featured %} • <b>Featured</b>{% endif %}</p>
-        <a class="button" href="{% url 'main:product_detail' p.pk %}">Detail</a>
-      </div>
+      <article class="card">
+        <div class="row">
+          {% if p.thumbnail %}
+            <img class="thumb" src="{{ p.thumbnail }}" alt="{{ p.name }}">
+          {% else %}
+            <img class="thumb" src="https://placehold.co/264x264/0e0e16/8b5cf6?text=No+Image" alt="No image">
+          {% endif %}
+
+          <div style="flex:1">
+            <h3 class="title">{{ p.name }} — <span class="price">Rp {{ p.price|intcomma }}</span></h3>
+            <p class="meta">
+              <span class="badge">{{ p.get_category_display|default:p.category }}</span>
+              {% if p.is_featured %}&nbsp;<span class="badge featured">FEATURED</span>{% endif %}
+            </p>
+            <p style="margin:0 0 10px 0;color:#d6d7df">{{ p.description|truncatechars:140 }}</p>
+
+            <a class="btn btn-primary" href="{% url 'main:product_detail' p.pk %}">Detail</a>
+          </div>
+        </div>
+      </article>
     {% endfor %}
-  {% endif %}
+  </div>
+{% endif %}
 {% endblock %}
