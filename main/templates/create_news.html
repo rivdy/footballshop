@@ -5,6 +5,6 @@
     {% csrf_token %}
     <table>{{ form.as_table }}</table>
     <button type="submit">Save</button>
-    <a class="button" href="{% url 'main:show_main' %}">Cancel</a>
+    <a class="button" href="{% url 'main:home' %}">Cancel</a>
   </form>
 {% endblock %}
