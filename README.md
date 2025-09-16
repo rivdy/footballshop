@@ -76,8 +76,8 @@ Aplikasi **Football Shop** sederhana untuk katalog perlengkapan bola. Pada Tugas
 | `category`    | CharField      | Kategori (wajib)                                |
 | `is_featured` | BooleanField   | Status unggulan (wajib)                         |
 | `created_at`  | DateTimeField  | `auto_now_add=True` *(ditambahkan di Tugas 3)*  |
-| 👉 `stock`    | IntegerField   | Opsional                                        |
-| 👉 `brand`    | CharField      | Opsional                                        |
+|  `stock`      | IntegerField   | Opsional                                        |
+|  `brand`      | CharField      | Opsional                                        |
 
 > Saat menambah `created_at` pada tabel yang sudah berisi data, **makemigrations** akan meminta default—tekan **Enter** untuk `timezone.now`.
 
@@ -123,17 +123,19 @@ Secara umum, JSON lebih baik digunakan untuk aplikasi modern karena:
 XML masih unggul untuk dokumen yang membutuhkan validasi struktur kompleks, tetapi JSON lebih populer karena ringan dan sesuai kebutuhan integrasi aplikasi saat ini.
 # Football Shop
 
-### Halaman Home
-![Home](https://raw.githubusercontent.com/rivdy/footballshop/master/assets/img/ss-home.png)
-### Data XML
-![XML](https://raw.githubusercontent.com/rivdy/footballshop/master/assets/img/ss-xml.png)
+## Bukti Endpoint Data Delivery (Local)
 
-### Data JSON Deploy
-![JSON Deploy](https://raw.githubusercontent.com/rivdy/footballshop/master/assets/img/ss-json-deploy.png)
+### JSON (list) — http://127.0.0.1:8000/json/
+![JSON List](assets/img/ss-json.png)
 
+### JSON by ID — http://127.0.0.1:8000/json/1/
+![JSON by ID](assets/img/ss-json-id.png)
 
+### XML (list) — http://127.0.0.1:8000/xml/
+![XML List](assets/img/ss-xml.png)
 
-
+### XML by ID — http://127.0.0.1:8000/xml/1/
+![XML by ID](assets/img/ss-xml-id.png)
 
 ---
 
