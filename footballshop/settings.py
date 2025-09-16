@@ -15,7 +15,7 @@ load_dotenv()
 from pathlib import Path
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 DEBUG = not PRODUCTION
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"] # saat deploy tambahkan: ALLOWED_HOSTS += ["<username-sso>-footballshop.pbp.cs.ui.ac.id"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "rivaldy-putra-footballshop.pbp.cs.ui.ac.id"]
 
 CSRF_TRUSTED_ORIGINS = ["https://rivaldy-putra-footballshop.pbp.cs.ui.ac.id"]
 
