@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+  <h3>{{ product.name }}</h3>
+  <p><b>Harga:</b> Rp {{ product.price }}</p>
+  <p><b>Kategori:</b> {{ product.get_category_display }}</p>
+  <p><b>Featured:</b> {{ product.is_featured }}</p>
+  {% if product.thumbnail %}
+    <img src="{{ product.thumbnail }}" alt="thumb" width="280">
+  {% endif %}
+  <p style="white-space:pre-wrap">{{ product.description }}</p>
+{% endblock %}
