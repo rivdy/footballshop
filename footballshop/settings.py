@@ -73,7 +73,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'footballshop.wsgi.application'
 
-CSRF_TRUSTED_ORIGINS = ["https://rivaldy-putra-footballnews.pbp.cs.ui.ac.id"]
+CSRF_TRUSTED_ORIGINS = ["https://rivaldy-putra-footballshop.pbp.cs.ui.ac.id"]
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
