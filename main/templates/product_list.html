@@ -17,7 +17,9 @@
           {% endif %}
 
           <div style="flex:1">
-            <h3 class="title">{{ p.name }} — <span class="price">Rp {{ p.price|intcomma }}</span></h3>
+            <h3 class="title">
+              {{ p.name }} — <span class="price">Rp {{ p.price|intcomma }}</span>
+            </h3>
             <p class="meta">
               <span class="badge">{{ p.get_category_display|default:p.category }}</span>
               {% if p.is_featured %}&nbsp;<span class="badge featured">FEATURED</span>{% endif %}
@@ -31,4 +33,5 @@
     {% endfor %}
   </div>
 {% endif %}
+
 {% endblock %}

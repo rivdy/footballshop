@@ -16,18 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.views.generic import RedirectView
-from django.http import HttpResponse
-
-def ping(_):
-    return HttpResponse("OK", content_type="text/plain")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("__ping/", ping),  # cek cepat di PWS: /__ping/ harus "OK"
-    path("", include("main.urls")),  # root diarahkan ke urls-nya app main
-    # fallback kalau include di atas tidak memetakan root:
-    path("", RedirectView.as_view(pattern_name="main:product_list", permanent=False)),
+    path("", include("main.urls")),   # root diarahkan ke app main
 ]
 
 

@@ -35,16 +35,19 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "rivaldy-putra-footballshop.pbp.cs.ui
 
 # Application definition
 
+# footballshop/settings.py
+
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.humanize',
-    'main',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.humanize",  # <— WAJIB untuk intcomma, dsb
+    "main",
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -58,6 +61,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'footballshop.urls'
 
+# footballshop/settings.py
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -69,10 +73,11 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
+            # Modul yang benar:
+            "builtins": ["django.contrib.humanize.templatetags.humanize"],
         },
     },
 ]
-
 
 WSGI_APPLICATION = 'footballshop.wsgi.application'
 
