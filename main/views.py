@@ -1,30 +1,75 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+# main/views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse, HttpResponseNotFound
 from django.core import serializers
+
 from .models import Product
-# from .forms import ProductForm  # aktifkan jika form sudah ada
+from .forms import ProductForm
+
 
 def show_products(request):
     products = Product.objects.all().order_by("-created_at")
-    return render(request, "product_list.html", {"products": products})
+    context = {"products": products}
+    return render(request, "product_list.html", context)
+
 
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
     return render(request, "product_detail.html", {"product": product})
 
-# ---- Data delivery (JSON/XML) ----
-def show_json(request):
-    data = serializers.serialize("json", Product.objects.all())
+
+def create_product(request):
+    """
+    Form tambah produk.
+    NOTE: kalau templatenya bernama 'create_news.html', tetap dipakai di sini.
+    """
+    if request.method == "POST":
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("main:product_list")
+    else:
+        form = ProductForm()
+    return render(request, "create_news.html", {"form": form})
+
+
+# ---------- Data Delivery (untuk Postman) ----------
+
+def products_json(request):
+    qs = Product.objects.all()
+    data = serializers.serialize("json", qs)
     return HttpResponse(data, content_type="application/json")
+
+
+def product_json_by_id(request, id):
+    qs = Product.objects.filter(pk=id)
+    if not qs.exists():
+        return HttpResponseNotFound(f'{{"detail":"Product {id} not found"}}')
+    data = serializers.serialize("json", qs)
+    return HttpResponse(data, content_type="application/json")
+
+
+def products_xml(request):
+    qs = Product.objects.all()
+    data = serializers.serialize("xml", qs)
+    return HttpResponse(data, content_type="application/xml")
+
+
+def product_xml_by_id(request, id):
+    qs = Product.objects.filter(pk=id)
+    if not qs.exists():
+        return HttpResponseNotFound("<error>Not Found</error>", content_type="application/xml")
+    data = serializers.serialize("xml", qs)
+    return HttpResponse(data, content_type="application/xml")
+# --- alias agar cocok dengan urls lama ---
+def show_json(request):
+    return products_json(request)
 
 def show_json_by_id(request, id):
-    data = serializers.serialize("json", Product.objects.filter(pk=id))
-    return HttpResponse(data, content_type="application/json")
+    return product_json_by_id(request, id)
 
 def show_xml(request):
-    data = serializers.serialize("xml", Product.objects.all())
-    return HttpResponse(data, content_type="application/xml")
+    return products_xml(request)
 
 def show_xml_by_id(request, id):
-    data = serializers.serialize("xml", Product.objects.filter(pk=id))
-    return HttpResponse(data, content_type="application/xml")
+    return product_xml_by_id(request, id)
