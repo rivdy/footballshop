@@ -1,75 +1,95 @@
 # main/views.py
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core import serializers
+from django.urls import reverse
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+import datetime
 
 from .models import Product
 from .forms import ProductForm
 
-
-def show_products(request):
-    products = Product.objects.all().order_by("-created_at")
-    context = {"products": products}
-    return render(request, "product_list.html", context)
-
-
-def product_detail(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    return render(request, "product_detail.html", {"product": product})
-
-
-def create_product(request):
-    """
-    Form tambah produk.
-    NOTE: kalau templatenya bernama 'create_news.html', tetap dipakai di sini.
-    """
+# ---------- Auth ----------
+def register(request):
+    form = UserCreationForm()
     if request.method == "POST":
-        form = ProductForm(request.POST)
+        form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("main:home")
+            messages.success(request, "Your account has been successfully created!")
+            return redirect("main:login")
+    return render(request, "register.html", {"form": form})
+
+def login_user(request):
+    if request.method == "POST":
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            # set cookie last_login
+            response = HttpResponseRedirect(reverse("main:show_products"))
+            response.set_cookie("last_login", str(datetime.datetime.now()))
+            return response
     else:
-        form = ProductForm()
-    return render(request, "create_news.html", {"form": form})
+        form = AuthenticationForm(request)
+    return render(request, "login.html", {"form": form})
 
+def logout_user(request):
+    logout(request)
+    response = HttpResponseRedirect(reverse("main:login"))
+    response.delete_cookie("last_login")  # hapus cookie
+    return response
 
-# ---------- Data Delivery (untuk Postman) ----------
+# ---------- Main & Detail ----------
+@login_required(login_url="/login/")
+def show_products(request):
+    # ?filter=all (default) | ?filter=my
+    filter_type = request.GET.get("filter", "all")
+    if filter_type == "my":
+        products = Product.objects.filter(user=request.user).order_by("id")
+    else:
+        products = Product.objects.all().order_by("id")
 
-def products_json(request):
-    qs = Product.objects.all()
-    data = serializers.serialize("json", qs)
-    return HttpResponse(data, content_type="application/json")
+    context = {
+        "npm": "2406351453",
+        "name": request.user.username,
+        "class": "PBP B",
+        "products": products,
+        "last_login": request.COOKIES.get("last_login", "Never"),
+    }
+    return render(request, "product_list.html", context)
 
+@login_required(login_url="/login/")
+def product_detail(request, id):
+    product = get_object_or_404(Product, pk=id)
+    return render(request, "product_detail.html", {"product": product})
 
-def product_json_by_id(request, id):
-    qs = Product.objects.filter(pk=id)
-    if not qs.exists():
-        return HttpResponseNotFound(f'{{"detail":"Product {id} not found"}}')
-    data = serializers.serialize("json", qs)
-    return HttpResponse(data, content_type="application/json")
+@login_required(login_url="/login/")
+def create_product(request):
+    form = ProductForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        obj = form.save(commit=False)
+        obj.user = request.user  # hubungkan ke user yang login
+        obj.save()
+        return redirect("main:show_products")
+    return render(request, "create_product.html", {"form": form})
 
-
-def products_xml(request):
-    qs = Product.objects.all()
-    data = serializers.serialize("xml", qs)
-    return HttpResponse(data, content_type="application/xml")
-
-
-def product_xml_by_id(request, id):
-    qs = Product.objects.filter(pk=id)
-    if not qs.exists():
-        return HttpResponseNotFound("<error>Not Found</error>", content_type="application/xml")
-    data = serializers.serialize("xml", qs)
-    return HttpResponse(data, content_type="application/xml")
-# --- alias agar cocok dengan urls lama ---
+# ---------- Bukti JSON/XML ----------
 def show_json(request):
-    return products_json(request)
+    data = Product.objects.all()
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 def show_json_by_id(request, id):
-    return product_json_by_id(request, id)
+    data = Product.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 def show_xml(request):
-    return products_xml(request)
+    data = Product.objects.all()
+    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
 
 def show_xml_by_id(request, id):
-    return product_xml_by_id(request, id)
+    data = Product.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")

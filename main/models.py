@@ -1,7 +1,6 @@
 
 from django.db import models
-from django.utils import timezone
-import uuid
+from django.contrib.auth.models import User
 
 class Product(models.Model):
     CATEGORY_CHOICES = [
@@ -11,7 +10,7 @@ class Product(models.Model):
         ("bola", "Bola"),
         ("lainnya", "Lainnya"),
     ]
-
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True) # tambahkan ini
     name = models.CharField(max_length=200)
     price = models.IntegerField()
     description = models.TextField()

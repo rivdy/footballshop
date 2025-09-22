@@ -19,7 +19,8 @@ from django.urls import path, include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("main.urls")),   # root diarahkan ke app main
+    path("", include("main.urls")),
 ]
+
 
 
