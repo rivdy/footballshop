@@ -169,15 +169,6 @@ Materi tutorial sudah cukup jelas dan membantu memahami konsep form dan data del
 
 
 # Footballshop — Tugas 4: Implementasi Autentikasi, Session, dan Cookies pada Django
-Berikut isi **README.md** yang siap kamu taruh di root repo.
-(Sudah pakai subjudul sesuai butir tugas.)
-
----
-
-# Tugas 3 — Autentikasi, Session, Cookies (opsional: Selenium)
-
-**Mata Kuliah:** PBP — *Footballshop*
-**Nama/NPM/Kelas:** Rivaldy Putra Rivly — 2406351453 — PBP B
 
 ---
 
