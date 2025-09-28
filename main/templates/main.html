@@ -1,47 +1,68 @@
-<h1>Football News</h1>
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}Produk — Garuda Football Shop{% endblock %}
 
-<h5>NPM: </h5>
-<p>{{ npm }}</p>
+{% block content %}
+<h2 style="margin:8px 0 16px">Daftar Produk</h2>
 
-<h5>Name:</h5>
-<p>{{ name }}</p>
-
-<h5>Class:</h5>
-<p>{{ class }}</p>
-
-<a href="{% url 'main:create_news' %}">
-  <button>+ Add News</button>
-</a>
-<a href="{% url 'main:logout' %}">
-  <button>Logout</button>
-</a>
-<h5>Sesi terakhir login: {{ last_login }}</h5>
-<hr>
-
-{% if not news_list %}
-<p>Belum ada data berita pada football news.</p>
-{% else %}
-
-{% for news in news_list %}
-<div>
-  <h2><a href="{% url 'main:show_news' news.id %}">{{ news.title }}</a></h2>
-
-  <p><b>{{ news.get_category_display }}</b>{% if news.is_featured %} | 
-    <b>Featured</b>{% endif %}{% if news.is_news_hot %} | 
-    <b>Hot</b>{% endif %} | <i>{{ news.created_at|date:"d M Y H:i" }}</i> 
-    | Views: {{ news.news_views }}</p>
-
-  {% if news.thumbnail %}
-  <img src="{{ news.thumbnail }}" alt="thumbnail" width="150" height="100">
-  <br />
-  {% endif %}
-
-  <p>{{ news.content|truncatewords:25 }}...</p>
-
-  <p><a href="{% url 'main:show_news' news.id %}"><button>Read More</button></a></p>
-</div>
-
-<hr>
-{% endfor %}
-
+{% if messages %}
+  <div>
+    {% for message in messages %}
+      <div style="background:#102312;border:1px solid #1f4d2c;color:#c8f3d3;padding:10px;border-radius:10px;margin-bottom:10px">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
 {% endif %}
+
+{% if not products %}
+  <div class="empty">
+    <img alt="Empty" src="https://placehold.co/240x120/0e0e16/8b5cf6?text=No+Products" style="display:block;margin:0 auto 12px;border-radius:8px;border:1px solid var(--stroke)">
+    Belum ada product yang terdaftar. Klik <a class="btn btn-primary" href="{% url 'main:create_product' %}">+ Add</a> untuk menambahkan.
+  </div>
+{% else %}
+  <div class="grid">
+    {% for p in products %}
+      <div class="card" style="grid-column:span 12">
+        <div class="row">
+          {% if p.thumbnail %}
+            <img class="thumb" src="{{ p.thumbnail }}" alt="{{ p.name }}">
+          {% else %}
+            <img class="thumb" src="https://placehold.co/260x260/0e0e16/8b5cf6?text=No+Image" alt="No image">
+          {% endif %}
+
+          <div style="flex:1">
+            <h3 class="title"><a style="color:#fff;text-decoration:none" href="{% url 'main:product_detail' p.pk %}">{{ p.name }}</a></h3>
+            <p class="meta">
+              <span class="badge">{{ p.get_category_display|default:p.category }}</span>
+              {% if p.is_featured %}&nbsp;<span class="badge featured">FEATURED</span>{% endif %}
+            </p>
+
+            <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px">
+              <div class="price">Rp {{ p.price|intcomma }}</div>
+              {% if p.created_at %}
+                <small style="color:var(--muted)">Ditambahkan {{ p.created_at|date:"d M Y, H:i" }}</small>
+              {% endif %}
+              {% if p.updated_by %}
+                <small style="color:var(--muted)">• Terakhir diupdate oleh {{ p.updated_by.username }}</small>
+              {% endif %}
+            </div>
+
+            <p style="color:#d6d7df;line-height:1.6;margin-bottom:14px">{{ p.description|default:"Tidak ada deskripsi" }}</p>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <a class="btn" href="{% url 'main:product_detail' p.pk %}">Detail</a>
+              <a class="btn" href="{% url 'main:edit_product' p.pk %}">Edit</a>
+
+              <form method="post" action="{% url 'main:delete_product' p.pk %}" onsubmit="return confirm('Hapus produk ini?');" style="display:inline">
+                {% csrf_token %}
+                <button type="submit" class="btn" style="border-color:rgba(239,68,68,.45);color:#fecaca">Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}
