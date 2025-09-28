@@ -21,11 +21,13 @@ def register(request):
         if form.is_valid():
             try:
                 form.save()
-                messages.success(request, "Your account has been successfully created!")
+                messages.success(request, "Akun berhasil dibuat. Silakan login.")
                 return redirect("main:login")
             except IntegrityError:
-                # Username sudah dipakai tapi lolos validasi (mis. race condition/case-insensitive)
-                form.add_error("username", "Username sudah terpakai. Silakan pilih yang lain.")
+                messages.error(request, "Username sudah dipakai. Coba yang lain.")
+        else:
+            # UserCreationForm sebenarnya sudah kasih error “A user with that username already exists.”
+            messages.error(request, "Periksa kembali isian formulir.")
     return render(request, "register.html", {"form": form})
 
 def login_user(request):
