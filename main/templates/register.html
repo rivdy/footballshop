@@ -26,6 +26,8 @@
     <li>{{ message }}</li>
     {% endfor %}
   </ul>
+  {% if form.errors %}
+    <div style="color:#fca5a5">{{ form.errors }}</div>
   {% endif %}
 </div>
 
