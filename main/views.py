@@ -8,19 +8,24 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import datetime
+from django.db import IntegrityError
+from .forms import RegisterForm as UserCreationForm  # pakai form kustom di atas
 
 from .models import Product
 from .forms import ProductForm
 
 # ---------- Auth ----------
 def register(request):
-    form = UserCreationForm()
+    form = UserCreationForm(request.POST or None)
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Your account has been successfully created!")
-            return redirect("main:login")
+            try:
+                form.save()
+                messages.success(request, "Your account has been successfully created!")
+                return redirect("main:login")
+            except IntegrityError:
+                # Username sudah dipakai tapi lolos validasi (mis. race condition/case-insensitive)
+                form.add_error("username", "Username sudah terpakai. Silakan pilih yang lain.")
     return render(request, "register.html", {"form": form})
 
 def login_user(request):
