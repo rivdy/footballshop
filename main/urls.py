@@ -12,7 +12,8 @@ urlpatterns = [
     path("", show_products, name="show_products"),
     path("product/<int:id>/", product_detail, name="product_detail"),
     path("add/", create_product, name="create_product"),
-
+    path("", show_products, name="home"),
+    
     path("register/", register, name="register"),
     path("login/", login_user, name="login"),
     path("logout/", logout_user, name="logout"),

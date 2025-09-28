@@ -11,6 +11,7 @@ class Product(models.Model):
         ("lainnya", "Lainnya"),
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True) # tambahkan ini
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="products_updated")
     name = models.CharField(max_length=200)
     price = models.IntegerField()
     description = models.TextField()

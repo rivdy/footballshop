@@ -39,9 +39,9 @@ def login_user(request):
 
 def logout_user(request):
     logout(request)
-    response = HttpResponseRedirect(reverse("main:login"))
-    response.delete_cookie("last_login")  # hapus cookie
-    return response
+    resp = HttpResponseRedirect(reverse('main:login'))
+    resp.delete_cookie('last_login')
+    return resp
 
 # ---------- Main & Detail ----------
 @login_required(login_url="/login/")
@@ -73,9 +73,20 @@ def create_product(request):
     if request.method == "POST" and form.is_valid():
         obj = form.save(commit=False)
         obj.user = request.user  # hubungkan ke user yang login
+        obj.updated_by = request.user
         obj.save()
         return redirect("main:show_products")
     return render(request, "create_product.html", {"form": form})
+@login_required(login_url="/login/")
+def edit_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    form = ProductForm(request.POST or None, instance=product)
+    if form.is_valid() and request.method == "POST":
+        obj = form.save(commit=False)
+        obj.updated_by = request.user     # catat editor terakhir
+        obj.save()
+        return redirect("main:product_detail", id=product.id)
+    return render(request, "edit_product.html", {"form": form, "product": product})
 
 # ---------- Bukti JSON/XML ----------
 def show_json(request):

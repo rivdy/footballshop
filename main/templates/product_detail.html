@@ -13,23 +13,39 @@
 
     <div style="flex:1">
       <h2 class="title" style="font-size:26px">{{ product.name }}</h2>
+
       <p class="meta" style="margin-bottom:12px">
         <span class="badge">{{ product.get_category_display|default:product.category }}</span>
         {% if product.is_featured %}&nbsp;<span class="badge featured">FEATURED</span>{% endif %}
       </p>
 
+      <!-- ⬇️ Tambahan: info pembuat & editor terakhir -->
+      <p class="meta" style="margin:-4px 0 12px 0;color:var(--muted);font-size:13px">
+        Dibuat: 
+        {% if product.created_at %}{{ product.created_at|date:"d M Y, H:i" }}{% else %}-{% endif %}
+        {% if product.user %} oleh <b>{{ product.user.username }}</b>{% endif %}
+        {% if product.updated_at %}
+          <br>Terakhir diupdate: {{ product.updated_at|date:"d M Y, H:i" }}
+          {% if product.updated_by %} oleh <b>{{ product.updated_by.username }}</b>{% endif %}
+        {% endif %}
+      </p>
+      <!-- ⬆️ End tambahan -->
+
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div class="price" style="font-size:22px">Rp {{ product.price|intcomma }}</div>
-        {% if product.created_at %}
-          <div style="color:var(--muted);font-size:13px">Ditambahkan {{ product.created_at|date:"d M Y, H:i" }}</div>
-        {% endif %}
       </div>
 
       <p style="color:#d6d7df;line-height:1.65">{{ product.description|linebreaksbr }}</p>
 
-      <div style="display:flex;gap:10px;margin-top:16px">
+      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
         <a class="btn" href="{% url 'main:show_products' %}">← Kembali</a>
         <a class="btn btn-primary" href="{% url 'main:create_product' %}">+ Tambah Produk</a>
+
+        <!-- ⬇️ Opsional: tombol Edit hanya untuk pemilik/staff -->
+        {% if request.user.is_authenticated and (request.user == product.user or request.user.is_staff) %}
+          <a class="btn" href="{% url 'main:edit_product' product.id %}">✎ Edit</a>
+        {% endif %}
+        <!-- ⬆️ End opsional -->
       </div>
     </div>
   </div>
