@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% load humanize %}
-{% block title %}{{ product.name }} — Garuda Football Shop{% endblock %}
-{% block content %}
 
+{% block title %}{{ product.name }} — Garuda Football Shop{% endblock %}
+
+{% block content %}
 <article class="card">
   <div class="row">
     {% if product.thumbnail %}
@@ -19,9 +20,8 @@
         {% if product.is_featured %}&nbsp;<span class="badge featured">FEATURED</span>{% endif %}
       </p>
 
-      <!-- ⬇️ Tambahan: info pembuat & editor terakhir -->
       <p class="meta" style="margin:-4px 0 12px 0;color:var(--muted);font-size:13px">
-        Dibuat: 
+        Dibuat:
         {% if product.created_at %}{{ product.created_at|date:"d M Y, H:i" }}{% else %}-{% endif %}
         {% if product.user %} oleh <b>{{ product.user.username }}</b>{% endif %}
         {% if product.updated_at %}
@@ -29,7 +29,6 @@
           {% if product.updated_by %} oleh <b>{{ product.updated_by.username }}</b>{% endif %}
         {% endif %}
       </p>
-      <!-- ⬆️ End tambahan -->
 
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
         <div class="price" style="font-size:22px">Rp {{ product.price|intcomma }}</div>
@@ -41,14 +40,13 @@
         <a class="btn" href="{% url 'main:show_products' %}">← Kembali</a>
         <a class="btn btn-primary" href="{% url 'main:create_product' %}">+ Tambah Produk</a>
 
-        <!-- ⬇️ Opsional: tombol Edit hanya untuk pemilik/staff -->
-        {% if request.user.is_authenticated and (request.user == product.user or request.user.is_staff) %}
-          <a class="btn" href="{% url 'main:edit_product' product.id %}">✎ Edit</a>
+        {% if request.user.is_authenticated %}
+          {% if request.user == product.user or request.user.is_staff %}
+            <a class="btn" href="{% url 'main:edit_product' product.id %}">✎ Edit</a>
+          {% endif %}
         {% endif %}
-        <!-- ⬆️ End opsional -->
       </div>
     </div>
   </div>
 </article>
-
 {% endblock %}
