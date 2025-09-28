@@ -13,6 +13,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
+    @media(max-width:680px){
+    nav{flex-wrap:wrap}
+    #nav-toggle{display:inline-flex}}
     :root{
       --bg:#0b0b0e;         /* background gelap elegan */
       --card:#121218;       /* kartu */
@@ -100,14 +103,16 @@
       <nav>
         <a href="{% url 'main:show_products' %}" class="btn">Home</a>
         <a href="{% url 'main:create_product' %}" class="btn btn-primary">+ Add</a>
-
         {% if request.user.is_authenticated %}
-          <span class="btn" style="pointer-events:none">Hi, {{ request.user.username }}</span>
-          <a href="{% url 'main:logout' %}" class="btn">Logout</a>
+          <form method="post" action="{% url 'main:logout' %}" style="display:inline">
+            {% csrf_token %}
+            <button class="btn" type="submit">Logout</button>
+          </form>
         {% else %}
           <a href="{% url 'main:login' %}" class="btn">Login</a>
           <a href="{% url 'main:register' %}" class="btn">Register</a>
         {% endif %}
+        <button id="nav-toggle" class="btn" style="display:none">☰</button>
       </nav>
     </header>
 
