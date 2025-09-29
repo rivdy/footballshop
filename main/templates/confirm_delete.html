@@ -1,13 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Hapus {{ product.name }} — Garuda Football Shop{% endblock %}
+{% block title %}Hapus {{ product.name }}{% endblock %}
 {% block content %}
-<article class="card" style="max-width:640px;margin:0 auto;text-align:center">
-  <h2 class="title">Hapus Produk</h2>
-  <p>Yakin ingin menghapus <b>{{ product.name }}</b>?</p>
-  <form method="post" style="display:inline-block;margin-top:10px">
-    {% csrf_token %}
-    <button class="btn" type="submit" style="border-color:rgba(239,68,68,.45);color:#fecaca">Ya, hapus</button>
-    <a class="btn" href="{% url 'main:product_detail' product.pk %}">Batal</a>
+<article class="card">
+  <h2 style="margin-top:0">Hapus “{{ product.name }}”?</h2>
+  <form method="POST">{% csrf_token %}
+    <button class="btn btn-primary" type="submit">Ya, hapus</button>
+    <a class="btn" href="{% url 'main:show_products' %}">Batal</a>
   </form>
 </article>
 {% endblock %}

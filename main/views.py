@@ -85,32 +85,36 @@ def create_product(request):
         obj.save()
         return redirect("main:show_products")
     return render(request, "create_product.html", {"form": form})
-@login_required(login_url="/login/")
-def edit_product(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    if request.method == "POST":
-        form = ProductForm(request.POST, instance=product)
-        if form.is_valid():
-            obj = form.save(commit=False)
-            # kalau kamu punya field updated_by
-            if hasattr(obj, "updated_by"):
-                obj.updated_by = request.user
-            obj.save()
-            messages.success(request, "Produk berhasil diperbarui.")
-            return redirect("main:product_detail", pk=product.pk)
-    else:
-        form = ProductForm(instance=product)
-    return render(request, "edit_product.html", {"form": form, "product": product})
+@login_required
+def edit_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    if product.user != request.user and not request.user.is_staff:
+        return redirect('main:show_products')
 
-@login_required(login_url='/login/')
-def delete_product(request, pk):
-    product = get_object_or_404(Product, pk=pk)
+    form = ProductForm(request.POST or None, instance=product)
+    if form.is_valid() and request.method == 'POST':
+        obj = form.save(commit=False)
+        # opsional: catat editor
+        if hasattr(obj, "updated_by"):
+            obj.updated_by = request.user
+        obj.save()
+        return redirect('main:product_detail', id=product.id)
+
+    return render(request, "edit_product.html", {"form": form})
+
+@login_required
+def delete_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    if product.user != request.user and not request.user.is_staff:
+        return redirect('main:show_products')
+
     if request.method == "POST":
         product.delete()
-        messages.success(request, "Produk berhasil dihapus.")
-        return redirect("main:show_products")
-    # Opsional: halaman konfirmasi
+        return redirect('main:show_products')
+
+    # konfirmasi sederhana (boleh skip & langsung pakai tombol form POST di kartu)
     return render(request, "confirm_delete.html", {"product": product})
+
 # ---------- Bukti JSON/XML ----------
 def show_json(request):
     data = Product.objects.all()
