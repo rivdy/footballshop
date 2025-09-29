@@ -10,24 +10,23 @@ from django.contrib import messages
 import datetime
 from django.db import IntegrityError
 from .forms import RegisterForm as UserCreationForm  # pakai form kustom di atas
-
+from django.db import IntegrityError
 from .models import Product
 from .forms import ProductForm
 
 # ---------- Auth ----------
 def register(request):
-    form = UserCreationForm(request.POST or None)
     if request.method == "POST":
+        form = UserCreationForm(request.POST)
         if form.is_valid():
             try:
                 form.save()
                 messages.success(request, "Akun berhasil dibuat. Silakan login.")
                 return redirect("main:login")
             except IntegrityError:
-                messages.error(request, "Username sudah dipakai. Coba yang lain.")
-        else:
-            # UserCreationForm sebenarnya sudah kasih error “A user with that username already exists.”
-            messages.error(request, "Periksa kembali isian formulir.")
+                form.add_error("username", "Username sudah dipakai.")
+    else:
+        form = UserCreationForm()
     return render(request, "register.html", {"form": form})
 
 def login_user(request):
