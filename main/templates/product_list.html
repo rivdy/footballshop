@@ -21,16 +21,20 @@
         <h3 class="font-semibold text-lg mb-1">{{ p.name }}</h3>
         <p class="text-sm text-gray-400 mb-2">{{ p.get_category_display|default:p.category }}</p>
         <div class="font-bold mb-3">Rp {{ p.price|intcomma }}</div>
+
         <div class="flex gap-2 flex-wrap">
           <a class="btn" href="{% url 'main:product_detail' p.id %}">Detail</a>
-
-          {% if request.user.is_authenticated and (request.user == p.user or request.user.is_staff) %}
-            <a class="btn" href="{% url 'main:edit_product' p.id %}">✎ Edit</a>
-
-            <form method="POST" action="{% url 'main:delete_product' p.id %}" onsubmit="return confirm('Hapus produk ini?')">
-              {% csrf_token %}
-              <button class="btn" type="submit">🗑 Delete</button>
-            </form>
+          {% if request.user.is_authenticated %}
+            {% if request.user == p.user or request.user.is_staff %}
+              <a class="btn" href="{% url 'main:edit_product' p.id %}">✎ Edit</a>
+              <form method="POST"
+                    action="{% url 'main:delete_product' p.id %}"
+                    onsubmit="return confirm('Hapus produk ini?')"
+                    style="display:inline">
+                {% csrf_token %}
+                <button class="btn" type="submit">🗑 Delete</button>
+              </form>
+            {% endif %}
           {% endif %}
         </div>
       </article>

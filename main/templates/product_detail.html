@@ -35,8 +35,17 @@
         <a class="btn" href="{% url 'main:show_products' %}">← Kembali</a>
         <a class="btn btn-primary" href="{% url 'main:create_product' %}">+ Tambah Produk</a>
 
-        {% if request.user.is_authenticated and (request.user == product.user or request.user.is_staff) %}
-          <a class="btn" href="{% url 'main:edit_product' product.id %}">✎ Edit</a>
+        {% if request.user.is_authenticated %}
+          {% if request.user == product.user or request.user.is_staff %}
+            <a class="btn" href="{% url 'main:edit_product' product.id %}">✎ Edit</a>
+            <form method="POST"
+                  action="{% url 'main:delete_product' product.id %}"
+                  onsubmit="return confirm('Hapus produk ini?')"
+                  style="display:inline">
+              {% csrf_token %}
+              <button class="btn" type="submit">🗑 Delete</button>
+            </form>
+          {% endif %}
         {% endif %}
       </div>
     </div>

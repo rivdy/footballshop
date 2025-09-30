@@ -100,6 +100,7 @@ def edit_product(request, id):
     return render(request, "edit_product.html", {"form": form})
 
 @login_required
+
 def delete_product(request, id):
     product = get_object_or_404(Product, pk=id)
     if product.user != request.user and not request.user.is_staff:

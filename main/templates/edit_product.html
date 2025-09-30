@@ -3,11 +3,11 @@
 {% block content %}
 <article class="card">
   <h2 style="margin-top:0">Edit Product</h2>
-  <form method="POST" class="form-style">
+  <form method="POST" class="form-style" enctype="multipart/form-data">
     {% csrf_token %}
     <table>{{ form.as_table }}</table>
     <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
-      <a class="btn" href="{% url 'main:product_detail' form.instance.id %}">← Batal</a>
+      <a class="btn" href="{% url 'main:product_detail' id=form.instance.id %}">← Batal</a>
       <button class="btn btn-primary" type="submit">Simpan</button>
     </div>
   </form>
