@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core import serializers
 from django.urls import reverse
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import datetime
@@ -100,7 +100,6 @@ def edit_product(request, id):
     return render(request, "edit_product.html", {"form": form})
 
 @login_required
-
 def delete_product(request, id):
     product = get_object_or_404(Product, pk=id)
     if product.user != request.user and not request.user.is_staff:
@@ -112,7 +111,13 @@ def delete_product(request, id):
 
     # konfirmasi sederhana (boleh skip & langsung pakai tombol form POST di kartu)
     return render(request, "confirm_delete.html", {"product": product})
-
+@login_required
+def home(request):
+    last_login_cookie = request.COOKIES.get('last_login')  # None jika tidak ada
+    return render(request, 'main/home.html', {
+        'last_login_cookie': last_login_cookie,
+        'last_login_user': getattr(request.user, 'last_login', None),  # dari DB/session
+    })
 # ---------- Bukti JSON/XML ----------
 def show_json(request):
     data = Product.objects.all()

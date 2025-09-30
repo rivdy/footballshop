@@ -428,4 +428,283 @@ Tambahkan dua tombol:
 * Buat `LiveServerTestCase` di `main/tests.py` untuk uji alur login/register/create/detail/logout.
 
 ---
+# Tugas 5: Desain Web menggunakan HTML, CSS dan Framework CSS
+
+## Daftar Isi
+
+* [1. Urutan Prioritas CSS Selector (Specificity)](#1-urutan-prioritas-css-selector-specificity)
+* [2. Pentingnya Responsive Design + Contoh](#2-pentingnya-responsive-design--contoh)
+* [3. Margin vs Border vs Padding (Box Model)](#3-margin-vs-border-vs-padding-box-model)
+* [4. Flexbox & Grid: Konsep dan Kegunaan](#4-flexbox--grid-konsep-dan-kegunaan)
+* [5. Implementasi Step-by-Step di Proyek](#5-implementasi-step-by-step-di-proyek)
+
+---
+
+## 1. Urutan Prioritas CSS Selector (Specificity)
+
+**Prioritas (dari tertinggi ke terendah):**
+
+1. `!important` pada deklarasi (hindari kecuali darurat).
+2. **Inline style** pada elemen: `<div style="color:red">`
+3. **ID selector**: `#header`
+4. **Class / attribute / pseudo-class**: `.btn`, `[type="text"]`, `:hover`
+5. **Element / pseudo-element**: `h1`, `p`, `::before`
+6. **Tiebreaker**: jika specificity sama, **aturan yang ditulis paling akhir** menang.
+
+> Catatan: angka “skor” sering dibayangkan (misal 1000/100/10/1) hanya untuk **mengilustrasikan** perbandingan, bukan aturan resmi.
+
+**Contoh:**
+
+```html
+<h1 id="title" class="heading">Hello</h1>
+```
+
+```css
+h1 { color: black; }            /* element */
+.heading { color: blue; }       /* class */
+#title { color: green; }        /* id */
+h1#title.heading { color: gray; } /* kombinasi: lebih spesifik */
+h1#title.heading { color: purple !important; } /* paling kuat */
+```
+
+Hasil akhir: **ungu** (karena `!important`).
+
+---
+
+## 2. Pentingnya Responsive Design + Contoh
+
+**Kenapa penting:**
+
+* **Multi-device**: layar HP, tablet, laptop, monitor besar—semua harus nyaman dipakai.
+* **UX & konversi**: navigasi mudah → bounce rate turun, pembelian naik.
+* **Aksesibilitas & SEO**: Google memprioritaskan mobile-friendly; pengguna dengan kebutuhan khusus terbantu.
+* **Maintainability**: satu basis kode untuk semua ukuran layar.
+
+**Contoh aplikasi yang sudah menerapkan responsive:**
+
+* **GitHub** (dashboard, repositori, diffs menyesuaikan lebar layar).
+* **Banyak e-commerce modern**: halaman produk & grid katalog beradaptasi (kartu mengecil, kolom berkurang).
+
+**Contoh aplikasi yang belum/kurang responsive:**
+
+* **Situs lama “fixed-width”** (mis. layout 960px statis): di HP harus zoom/scroll horizontal; tombol kecil sulit ditekan.
+
+**Snippet dasar responsive:**
+
+```html
+<!-- Tambahkan pada <head> -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+```
+
+```css
+/* Mobile-first */
+.card-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+
+@media (min-width: 640px) {  /* tablet kecil */
+  .card-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1024px) { /* desktop */
+  .card-grid { grid-template-columns: repeat(4, 1fr); }
+}
+```
+
+---
+
+## 3. Margin vs Border vs Padding (Box Model)
+
+* **Padding**: ruang **di dalam** border, mengelilingi konten.
+* **Border**: garis pembatas di **antara** padding dan margin.
+* **Margin**: ruang **di luar** border, memisahkan elemen dari elemen lain.
+
+```
+[ margin ]
+  [ border ]
+    [ padding ]
+      [ content ]
+```
+
+**Implementasi:**
+
+```css
+.box {
+  /* padding: jarak konten ke border */
+  padding: 16px 24px;
+
+  /* border: garis pembatas */
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+
+  /* margin: jarak ke elemen lain */
+  margin: 12px 0;
+}
+```
+
+**Tip penting (`box-sizing`)**:
+
+```css
+/* Agar width/height sudah termasuk padding+border (lebih mudah dihitung) */
+* { box-sizing: border-box; }
+```
+
+---
+
+## 4. Flexbox & Grid: Konsep dan Kegunaan
+
+### Flexbox (tata letak **1 dimensi**: baris **atau** kolom)
+
+* **Cocok untuk**: navbar, toolbar, alignment card secara horizontal, tombol CTA berjejer.
+* **Konsep**: container “flex” mengatur **main axis** (horizontal default) & **cross axis** (vertikal).
+* **Properti utama (container)**: `display:flex; gap; justify-content; align-items; flex-wrap;`
+* **Properti item**: `flex-grow; flex-shrink; flex-basis; align-self; order;`
+
+**Contoh: navbar & tombol:**
+
+```css
+.nav {
+  display: flex;
+  align-items: center;     /* vertikal tengah */
+  justify-content: space-between; /* kiri-kanan */
+  gap: 12px;
+  padding: 12px 16px;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;         /* biar turun baris di layar kecil */
+}
+```
+
+### Grid (tata letak **2 dimensi**: baris **dan** kolom)
+
+* **Cocok untuk**: grid produk, dashboard, kompleks layout halaman.
+* **Properti utama**: `display:grid; grid-template-columns; grid-template-rows; gap; grid-area;`
+* **Kekuatan**: kontrol area 2D, mudah buat layout responsif dengan fr unit & repeat.
+
+**Contoh: katalog produk responsif:**
+
+```css
+.products {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* mobile */
+  gap: 12px;
+}
+@media (min-width: 768px) { .products { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1024px){ .products { grid-template-columns: repeat(4, 1fr); } }
+```
+
+**Kapan pakai apa?**
+
+* **Flexbox**: urutan linier satu arah (row/column), alignment & distribusi ruang antar item.
+* **Grid**: susun elemen pada **dua dimensi** (baris+kolom) dengan kontrol area yang presisi.
+
+---
+
+## 5. Implementasi Step-by-Step di Proyek
+
+> Contoh alur **mobile-first** yang bisa kamu terapkan pada aplikasi (mis. toko olahraga).
+
+### Step 0 — Struktur & “wiring”
+
+* Pastikan file CSS global terhubung:
+
+  ```html
+  <link rel="stylesheet" href="/static/css/app.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  ```
+* Aktifkan `box-sizing` dan variabel warna/spacing jika perlu.
+
+  ```css
+  * { box-sizing: border-box; }
+  :root { --space: 12px; --brand: #0ea5e9; }
+  ```
+
+### Step 1 — Terapkan **Box Model** dengan sadar
+
+* Buat komponen kartu yang rapi jaraknya:
+
+  ```css
+  .card { padding: 16px; border: 1px solid #e5e7eb; border-radius: 10px; margin: 12px 0; }
+  .card h3 { margin: 0 0 8px; }
+  ```
+* Cek di DevTools: pastikan padding/border/margin sesuai, tidak ada scroll horizontal.
+
+### Step 2 — Layout dasar dengan **Flexbox**
+
+* Header & navbar:
+
+  ```css
+  header.nav { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; }
+  .nav .menu { display:flex; gap:8px; flex-wrap:wrap; }
+  ```
+* CTA sticky di PDP:
+
+  ```css
+  .sticky-cta { position: sticky; bottom: 0; display:flex; gap:8px; padding: 12px; background:#fff; border-top:1px solid #eee; }
+  ```
+
+### Step 3 — Grid untuk **katalog produk**
+
+```css
+.products { display:grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 640px) { .products { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px){ .products { grid-template-columns: repeat(4, 1fr); } }
+```
+
+### Step 4 — **Specificity hygiene**
+
+* Tulis selector dari **umum → spesifik**.
+* Hindari bertumpuk ID & `!important`. Jika butuh override, pakai **urutan file** atau tingkatkan selector secara wajar.
+* Contoh prioritas aman:
+
+  ```css
+  .btn { background: var(--brand); }
+  .btn.primary { background: #0284c7; }  /* lebih spesifik dari .btn */
+  ```
+
+### Step 5 — **Responsive design** (media queries)
+
+* Mobile-first; tambah breakpoints seperlunya:
+
+  ```css
+  /* Base = mobile */
+  .sidebar { display:none; }
+
+  @media (min-width: 1024px) {
+    .layout { display:grid; grid-template-columns: 240px 1fr; gap: 16px; }
+    .sidebar { display:block; }
+  }
+  ```
+* Uji di DevTools: iPhone SE, iPad, laptop 1366px.
+
+### Step 6 — Komponen utilitas (spacing & gap)
+
+* Konsistenkan jarak antarelemen:
+
+  ```css
+  .stack > * + * { margin-top: var(--space); }        /* vertical stack */
+  .inline { display:flex; flex-wrap:wrap; gap: var(--space); } /* horizontal */
+  ```
+
+### Step 7 — Test aksesibilitas cepat
+
+* **Kontras** tombol vs background (gunakan DevTools > Accessibility).
+* Fokus keyboard terlihat (`:focus-visible`), alt pada gambar produk.
+
+### Step 8 — Refactor & dokumentasi
+
+* Pisah file: `components/`, `layout/`, `pages/`.
+* Dokumentasikan pola (contoh class & snippet) di README agar tim konsisten.
+
+### Step 9 — Commit
+
+```bash
+git add .
+git commit -m "feat(ui): responsive grid, flex header, box model hygiene"
+git push origin <branch-kamu>
+```
+
+---
+
+
 
