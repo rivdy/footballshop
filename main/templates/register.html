@@ -1,32 +1,17 @@
 {% extends "base.html" %}
 {% block title %}Register — Garuda Football Shop{% endblock %}
+
 {% block content %}
-
 <article class="card">
-  <h2 class="title" style="margin-bottom:12px">Buat Akun</h2>
-
-  {% if messages %}
-    <ul>
-      {% for message in messages %}
-        <li>{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-
-  <form method="post" novalidate>
+  <h2 style="margin-top:0">Register</h2>
+  <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <div style="display:flex;gap:10px;margin-top:10px">
-      <button class="btn btn-primary" type="submit">Daftar</button>
-      <a class="btn" href="{% url 'main:login' %}">Sudah punya akun? Login</a>
-    </div>
+    <button class="btn btn-primary" type="submit">Daftar</button>
   </form>
 
-  {% if form.errors %}
-    <div style="color:#fca5a5;margin-top:12px">
-      {{ form.errors }}
-    </div>
+  {% if messages %}
+    <ul>{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>
   {% endif %}
 </article>
-
-{% endblock content %}
+{% endblock %}

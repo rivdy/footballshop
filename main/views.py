@@ -9,8 +9,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import datetime
 from django.db import IntegrityError
-from .forms import RegisterForm as UserCreationForm  # pakai form kustom di atas
-from django.db import IntegrityError
 from .models import Product
 from .forms import ProductForm
 

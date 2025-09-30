@@ -1,10 +1,9 @@
 from django.urls import path
 from .views import (
+    show_products, product_detail, create_product, edit_product, delete_product,
     register, login_user, logout_user,
-    show_products, product_detail, create_product,
-    show_json, show_json_by_id, show_xml, show_xml_by_id,
-    edit_product, delete_product, 
-)
+    show_json, show_xml, show_json_by_id, show_xml_by_id,
+) 
 
 app_name = "main"
 
