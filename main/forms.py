@@ -8,3 +8,4 @@ class ProductForm(forms.ModelForm):
             'name', 'price', 'description', 'thumbnail',
             'category', 'is_featured', 'stock'
         ]
+    

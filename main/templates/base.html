@@ -2,6 +2,7 @@
 <!doctype html>
 <html lang="id">
 <head>
+<meta name="csrf-token" content="{{ csrf_token }}">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>{% block title %}Garuda Football Shop{% endblock %}</title>
@@ -25,53 +26,107 @@
       margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       background:linear-gradient(180deg,#0b0b0e 0%,#0d0d14 100%); color:var(--text);
     }
-    .container{max-width:1040px;margin:32px auto;padding:0 20px}
-    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
-    .brand h1{font-size:34px;margin:0 0 4px 0;letter-spacing:.3px}
-    .brand small{color:var(--muted)}
 
-    /* Buttons */
+    /* ===== Layout umum (lebih lebar) ===== */
+    .container{max-width:1200px;margin:24px auto;padding:0 16px}  /* sebelumnya 820px */
+
+    /* Chip nama user di pojok kanan */
+    .user-chip{
+      border:1px solid var(--stroke);
+      padding:6px 10px;border-radius:999px;
+      background:#121218;box-shadow:var(--shadow);
+      font-weight:600;
+    }
+
+    
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .brand h1{font-size:26px;margin:0 0 2px 0;letter-spacing:.3px}
+    .brand small{color:var(--muted);font-size:12px}
+
+    /* Buttons (lebih kecil) */
     .btn{
-      display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;
+      display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;
       border:1px solid var(--stroke); background:linear-gradient(180deg,#141422 0%,#0e0e18 100%);
       color:var(--primary-2);text-decoration:none;font-weight:600;transition:.2s ease; box-shadow:0 0 0 rgba(0,0,0,0);
+      font-size:0.9rem;
     }
     .btn:hover{border-color:var(--primary); color:#fff; box-shadow:var(--shadow)}
     .btn-primary{background:linear-gradient(180deg,rgba(139,92,246,.18),rgba(139,92,246,.10));border-color:rgba(139,92,246,.45);color:#fff}
     .btn-primary:hover{transform:translateY(-1px)}
 
-    /* Cards & layout */
-    .grid{display:grid; grid-template-columns:repeat(12,1fr); gap:16px}
-    .card{
-      grid-column:span 12; background:linear-gradient(180deg,#121218 0%, #0f0f15 100%);
-      border:1px solid var(--stroke); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow);
+    /* Grid kartu (1→2→4 kolom) */
+    .cards-grid{
+      display:grid; gap:10px;
+      grid-template-columns:repeat(1,minmax(0,1fr));
     }
-    .row{display:flex;gap:16px;align-items:flex-start}
-    .thumb{width:132px;height:132px;border-radius:12px;object-fit:cover;flex:0 0 auto;border:1px solid var(--stroke); background:#0c0c12}
-    .title{margin:0 0 6px 0;font-size:20px;line-height:1.35}
-    .meta{margin:0 0 10px 0;color:var(--muted);font-style:italic}
-    .badge{display:inline-block;padding:4px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.08); background:#0e0e16; color:var(--muted);font-size:12px;font-weight:600}
-    .badge.featured{border-color:rgba(16,185,129,.35); color:#dcfce7; background:rgba(16,185,129,.10)}
-    .price{font-weight:700;color:#fff}
-    hr.sep{height:1px;border:0;background:var(--stroke);margin:20px 0}
-    .empty{text-align:center;color:var(--muted);padding:36px;border:1px dashed var(--stroke);border-radius:var(--radius); background:rgba(255,255,255,.02)}
-    footer{color:var(--muted);font-size:13px;margin:36px 0 12px}
+    @media (min-width:640px){ .cards-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (min-width:1024px){ .cards-grid{ grid-template-columns:repeat(4,minmax(0,1fr)); } }
 
-    /* NAVBAR (desktop + mobile) */
-    nav{display:flex;gap:12px;align-items:center}
+    /* Card & media seragam (lebih kecil) */
+    .card{
+      border:1px solid var(--stroke); border-radius:12px; padding:8px; background:#121218;
+    }
+    .card .media{
+      width:100%; aspect-ratio:4/3; overflow:hidden; border-radius:10px; margin-bottom:8px;
+      border:1px solid var(--stroke); background:#0c0c12;
+    }
+    .card .media > img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    .card h3{ font-size:0.98rem; margin:0 0 4px; }
+    .card .text-sm{ font-size:0.86rem; }
+    .card .font-bold{ font-size:0.95rem; }
+
+    .empty{ text-align:center;color:var(--muted);padding:20px;border:1px dashed var(--stroke);border-radius:12px; background:rgba(255,255,255,.02) }
+    footer{color:var(--muted);font-size:12px;margin:24px 0 8px}
+
+    /* Navbar (desktop + mobile) */
+    nav{display:flex;gap:8px;align-items:center}
     #nav-toggle{display:none}
-    #nav-menu{display:none}              /* hidden by default on mobile */
-    .nav-links{display:flex;gap:12px}    /* visible on desktop */
+    #nav-menu{display:none}
+    .nav-links{display:flex;gap:8px}
 
     @media(max-width:680px){
-      header{flex-wrap:wrap;gap:10px}
-      .nav-links{display:none}           /* hide desktop links */
-      #nav-toggle{display:inline-flex}   /* show hamburger */
-      #nav-menu{
-        display:none; flex-direction:column; gap:10px; width:100%; margin-top:10px;
-      }
+      header{flex-wrap:wrap;gap:8px}
+      .nav-links{display:none}
+      #nav-toggle{display:inline-flex}
+      #nav-menu{display:none; flex-direction:column; gap:8px; width:100%; margin-top:8px;}
       #nav-menu .btn{width:100%; justify-content:center}
     }
+    /* ===== Modal polished (persegi, tidak kepotong) ===== */
+      .modal{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:60; }
+      .modal.open{ display:flex; }
+      .modal .backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.55); }
+      .modal .panel{
+        position:relative; width:min(680px, calc(100% - 40px));
+        border:1px solid var(--stroke); background:#121218;
+        border-radius:8px; /* kecil & tidak tajam */
+        box-shadow:var(--shadow); padding:16px 16px 14px;
+        overflow:visible; /* pastikan isi tidak terpotong */
+      }
+
+      /* Header kecil + tombol close */
+      .modal .panel .modal-head{
+        display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;
+      }
+      .modal .panel .modal-title{ font-weight:700; font-size:1rem; }
+      .modal .panel .modal-close{
+        border:1px solid var(--stroke); background:#0e0e16;
+        border-radius:6px; padding:4px 8px; cursor:pointer; color:#cbd5e1;
+      }
+
+      /* Field set: label + input */
+      .field{ margin-bottom:10px; }
+      .field label{ display:block; margin-bottom:6px; }
+      .input, .select, .textarea{
+        width:100%; background:#0e0e16; color:var(--text);
+        border:1px solid #2a2b3d; border-radius:8px;  /* persegi halus */
+        padding:10px 12px; outline:none;
+      }
+      .textarea{ min-height:140px; resize:vertical; }
+
+      /* Bar tombol bawah */
+      .actions{ display:flex; gap:8px; justify-content:flex-end; margin-top:8px; }
+
   </style>
 
   {% block extra_head %}{% endblock %}
@@ -84,23 +139,34 @@
         <small>Rivaldy Putra Rivly — PBP B - 2406351453</small>
       </div>
 
-      <!-- Desktop links -->
+      <!-- Desktop links (tanpa logic produk) -->
       <nav class="nav-links" aria-label="Primary">
-        <a href="{% url 'main:show_products' %}" class="btn">Home</a>
-        <a href="{% url 'main:create_product' %}" class="btn btn-primary">+ Add</a>
+      <div style="display:flex;align-items:center;gap:10px;">
+          {% if request.user.is_authenticated %}
+            <span class="user-chip">@{{ request.user.username }}</span>
+          {% endif %}
 
-        {% if request.user.is_authenticated %}
-          <form method="post" action="{% url 'main:logout' %}" style="display:inline">
-            {% csrf_token %}
-            <button class="btn" type="submit">Logout</button>
-          </form>
-        {% else %}
-          <a href="{% url 'main:login' %}" class="btn">Login</a>
-          <a href="{% url 'main:register' %}" class="btn">Register</a>
-        {% endif %}
-      </nav>
+          <nav class="nav-links" aria-label="Primary">
+            <a href="{% url 'main:show_products' %}" class="btn">Home</a>
+            <a href="{% url 'main:create_product' %}" class="btn btn-primary">+ Add</a>
+
+            {% if request.user.is_authenticated %}
+              <form method="post" action="{% url 'main:logout' %}" style="display:inline">
+                {% csrf_token %}
+                <button class="btn" type="submit">Logout</button>
+              </form>
+            {% else %}
+              <a href="{% url 'main:login' %}" class="btn">Login</a>
+              <a href="{% url 'main:register' %}" class="btn">Register</a>
+            {% endif %}
+          </nav>
+        </div>
+      </header>
+
       {% if last_login %}
-        <small style="color:#a2a2b3; display:block; margin-top:6px;">Last login: {{ last_login }}</small>
+        <small style="color:#a2a2b3;display:block;margin-top:-6px;text-align:right;">
+          Last login: {{ last_login }}
+        </small>
       {% endif %}
 
       <!-- Hamburger (mobile) -->
@@ -128,7 +194,6 @@
   </div>
 
   <script>
-    // Toggle mobile menu
     (function() {
       const toggle = document.getElementById('nav-toggle');
       const menu = document.getElementById('nav-menu');
@@ -138,7 +203,6 @@
         menu.style.display = isOpen ? 'none' : 'flex';
         toggle.setAttribute('aria-expanded', String(!isOpen));
       });
-      // Tutup menu saat viewport melebar (akses balik ke desktop)
       const mq = window.matchMedia('(min-width: 681px)');
       mq.addEventListener?.('change', e => { if (e.matches) menu.style.display = 'none'; });
     })();

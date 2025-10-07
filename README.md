@@ -695,14 +695,93 @@ Hasil akhir: **ungu** (karena `!important`).
 
 * Pisah file: `components/`, `layout/`, `pages/`.
 * Dokumentasikan pola (contoh class & snippet) di README agar tim konsisten.
+## Tugas 6: Javascript dan AJAX
 
-### Step 9 — Commit
+### 1) Perbedaan **Synchronous** vs **Asynchronous** Request
 
-```bash
-git add .
-git commit -m "feat(ui): responsive grid, flex header, box model hygiene"
-git push origin <branch-kamu>
+| Aspek             | Synchronous (Sync)                                                     | Asynchronous (Async/AJAX)                                               |
+| ----------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Cara kerja        | Browser kirim request lalu **menunggu** HTML penuh, halaman **reload** | Browser kirim request di belakang layar (XHR/`fetch`), **tanpa reload** |
+| Data balik        | HTML utuh                                                              | Umumnya **JSON** (atau fragment HTML)                                   |
+| Dampak UX         | Terasa “pindah halaman”, konteks sering hilang                         | Interaksi **cepat & mulus**, hanya bagian perlu yang di-update          |
+| Konsumsi jaringan | Lebih besar (HTML + assets re-render)                                  | Lebih hemat (payload kecil)                                             |
+
+Ringkasnya: **sync = blocking & reload**, **async = non-blocking & partial update**.
+
+---
+
+### 2) Alur Kerja AJAX di Django (Request–Response)
+
+1. **Event UI** (klik/submit) memicu `fetch()` di front-end.
+2. **URL routing** di `urls.py` mengarah ke **view AJAX** (mis. `products_json`).
+3. **Proteksi CSRF**: Django memverifikasi `X-CSRFToken` untuk method non-GET.
+4. **View** memproses (validasi form, DB), lalu mengembalikan **JsonResponse**.
+5. **Front-end** menerima JSON → **memperbarui DOM** (render kartu, tutup modal, toast) **tanpa reload**.
+
+> Sketsa:
+
 ```
+UI event ─▶ fetch() ─▶ urls.py ─▶ views.py (validasi+DB+CSRF) ─▶ JsonResponse ─▶ JS update DOM
+```
+
+---
+
+### 3) Keuntungan AJAX dibanding Render Biasa
+
+* **Performa & UX**: cepat karena tidak memuat ulang halaman penuh.
+* **Efisien**: payload hanya **data** (JSON), bukan template besar.
+* **Interaktif**: modal, inline edit, infinite scroll, live validation.
+* **Reusable**: endpoint JSON bisa dipakai komponen lain atau aplikasi lain.
+
+---
+
+### 4) Keamanan Login & Register via AJAX (Django)
+
+Checklist yang dipakai pada proyek ini:
+
+* **CSRF wajib**
+  Tambahkan token di template:
+
+  ```html
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  ```
+
+  Kirim lewat header saat `POST`:
+
+  ```js
+  fetch("/ajax/login/", {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": getCSRFToken(),           // diambil dari cookie/meta
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: new URLSearchParams({username, password})
+  });
+  ```
+* **Validasi server-side** tetap (gunakan `AuthenticationForm` / `UserCreationForm`).
+* **Gunakan API auth Django** (`login()`, `logout()`), jangan set session manual.
+* **HTTPS** di production + cookie aman:
+  `SESSION_COOKIE_SECURE=True`, `CSRF_COOKIE_SECURE=True`, `SESSION_COOKIE_HTTPONLY=True`.
+* **Authorization**: operasi sensitif (edit/hapus) hanya untuk **owner** atau **staff**.
+* (Opsional) **Rate limiting** endpoint auth untuk cegah brute force.
+
+---
+
+### 5) Dampak AJAX terhadap User Experience
+
+* **Respons cepat**: Create/Edit/Delete terasa instan (modal + toast).
+* **Konteks terjaga**: pengguna tidak kehilangan posisi/scroll.
+* **State jelas**: bisa tampilkan **loading / empty / error** lokal.
+* **Lebih “app-like”**: pengalaman menyerupai aplikasi desktop/mobile.
+
+---
+
+### 6) Ringkasan Implementasi pada Proyek
+
+* Endpoint AJAX:
+  `GET /ajax/products/`, `POST /ajax/products/create/`, `POST /ajax/products/<id>/update/`, `POST /ajax/products/<id>/delete/`, `POST /ajax/login/`, `POST /ajax/register/`, `POST /ajax/logout/`.
+* View mengembalikan **JSON** (menggunakan `JsonResponse`) dan memeriksa **izin** (owner/staff).
+* Front-end memakai **fetch + CSRF header**, men-render list produk di container, serta modal **Create/Edit/Delete** tanpa reload.
 
 ---
 

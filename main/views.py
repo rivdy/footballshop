@@ -11,8 +11,29 @@ import datetime
 from django.db import IntegrityError
 from .models import Product
 from .forms import ProductForm
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from django.utils import timezone
+from django.contrib.auth import authenticate
+
 
 # ---------- Auth ----------
+def product_to_dict(p: Product):
+    return {
+        "id": p.id,
+        "name": p.name,
+        "price": int(p.price) if getattr(p, "price", None) is not None else 0,
+        "description": getattr(p, "description", "") or "",
+        "category": getattr(p, "category", "") or "",
+        "thumbnail": getattr(p, "thumbnail", "") or "",
+        "is_featured": bool(getattr(p, "is_featured", False)),
+        "owner": getattr(getattr(p, "user", None), "username", None),
+        "created_at": getattr(p, "created_at", None).isoformat() if getattr(p, "created_at", None) else None,
+        "updated_at": getattr(p, "updated_at", None).isoformat() if getattr(p, "updated_at", None) else None,
+    }
 def register(request):
     if request.method == "POST":
         form = UserCreationForm(request.POST)
@@ -35,7 +56,7 @@ def login_user(request):
             login(request, user)
             # set cookie last_login
             response = HttpResponseRedirect(reverse("main:show_products"))
-            response.set_cookie("last_login", str(datetime.datetime.now()))
+            response.set_cookie("last_login", timezone.now().strftime("%Y- %m - %d %H:%M"))
             return response
     else:
         form = AuthenticationForm(request)
@@ -50,20 +71,32 @@ def logout_user(request):
 # ---------- Main & Detail ----------
 @login_required(login_url="/login/")
 def show_products(request):
-    products = Product.objects.all().order_by('-created_at')
-    # ?filter=all (default) | ?filter=my
-    filter_type = request.GET.get("filter", "all")
+    # === Filter dasar ===
+    filter_type = request.GET.get("filter", "all")  # "all" | "my"
+
+    qs = Product.objects.all().select_related("user").order_by("-created_at")
     if filter_type == "my":
-        products = Product.objects.filter(user=request.user).order_by("id")
-    else:
-        products = Product.objects.all().order_by("id")
+        qs = qs.filter(user=request.user)
+    last_login_raw = request.COOKIES.get("last_login", "")
+    last_login_fmt = last_login_raw[:16] if last_login_raw else "Never"  # YYYY-mm-dd HH:MM
+    # === Pagination: 4 produk per halaman ===
+    paginator = Paginator(qs, 4)
+    page_number = request.GET.get("page", 1)
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
 
     context = {
         "npm": "2406351453",
         "name": request.user.username,
         "class": "PBP B",
-        "products": products,
-        "last_login": request.COOKIES.get("last_login", "Never"),
+        "products": page_obj,  # kirim Page object (bukan queryset mentah)
+        "filter_type": filter_type,
+        "last_login": last_login_fmt,
+        "total_items": paginator.count,
     }
     return render(request, "product_list.html", context)
 
@@ -134,3 +167,114 @@ def show_xml(request):
 def show_xml_by_id(request, id):
     data = Product.objects.filter(pk=id)
     return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+
+def product_list(request):
+    qs = Product.objects.all().order_by('-created_at')
+    paginator = Paginator(qs, 4)  # <= 4 produk per halaman
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'main.html', {'products': page_obj})  # ganti context key jika perlu
+# ===================== AJAX (TUGAS 6) =====================
+
+# ---- LIST PRODUCTS (GET) ----
+@login_required(login_url="/login/")
+@require_http_methods(["GET"])
+def products_json(request):
+    scope = request.GET.get("filter", "all")  # "all" | "my"
+    qs = Product.objects.all().order_by("-created_at")
+    if scope == "my":
+        qs = qs.filter(user=request.user)
+
+    items = [product_to_dict(p) for p in qs]
+    return JsonResponse({"ok": True, "count": len(items), "items": items}, status=200)
+
+
+# ---- CREATE PRODUCT (POST) ----
+@login_required(login_url="/login/")
+@require_http_methods(["POST"])
+def product_create_ajax(request):
+    form = ProductForm(request.POST, request.FILES or None)
+    if form.is_valid():
+        obj = form.save(commit=False)
+        # pastikan ownership tercatat
+        if hasattr(obj, "user"):
+            obj.user = request.user
+        if hasattr(obj, "updated_by"):
+            obj.updated_by = request.user
+        if hasattr(obj, "created_at") and getattr(obj, "created_at") is None:
+            obj.created_at = timezone.now()
+        obj.save()
+        return JsonResponse({"ok": True, "item": product_to_dict(obj)}, status=201)
+    return JsonResponse({"ok": False, "errors": form.errors}, status=400)
+
+
+# ---- UPDATE PRODUCT (POST/PATCH) ----
+@login_required(login_url="/login/")
+@require_http_methods(["POST", "PATCH"])
+def product_update_ajax(request, id):
+    product = get_object_or_404(Product, pk=id)
+
+    # izin: owner atau staff
+    if getattr(product, "user", None) != request.user and not request.user.is_staff:
+        return JsonResponse({"ok": False, "error": "Forbidden"}, status=403)
+
+    form = ProductForm(request.POST, request.FILES or None, instance=product)
+    if form.is_valid():
+        obj = form.save(commit=False)
+        if hasattr(obj, "updated_by"):
+            obj.updated_by = request.user
+        obj.save()
+        return JsonResponse({"ok": True, "item": product_to_dict(obj)}, status=200)
+    return JsonResponse({"ok": False, "errors": form.errors}, status=400)
+
+
+# ---- DELETE PRODUCT (POST/DELETE) ----
+@login_required(login_url="/login/")
+@require_http_methods(["POST", "DELETE"])
+def product_delete_ajax(request, id):
+    product = get_object_or_404(Product, pk=id)
+
+    # izin: owner atau staff
+    if getattr(product, "user", None) != request.user and not request.user.is_staff:
+        return JsonResponse({"ok": False, "error": "Forbidden"}, status=403)
+
+    product.delete()
+    return JsonResponse({"ok": True}, status=200)
+
+
+# ---- LOGIN (POST) ----
+@require_http_methods(["POST"])
+def login_ajax(request):
+    form = AuthenticationForm(data=request.POST)
+    if form.is_valid():
+        user = form.get_user()
+        # Atau gunakan authenticate(...) jika mau manual:
+        # user = authenticate(request, username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+        if user is not None:
+            login(request, user)
+            resp = JsonResponse({"ok": True, "user": user.username}, status=200)
+            # set cookie last_login (format rapi)
+            resp.set_cookie("last_login", timezone.now().strftime("%d %b %Y, %H:%M"))
+            return resp
+    # error
+    return JsonResponse({"ok": False, "errors": form.errors or {"__all__": ["Invalid credentials"]}}, status=400)
+
+
+# ---- REGISTER (POST) ----
+@require_http_methods(["POST"])
+def register_ajax(request):
+    form = UserCreationForm(request.POST)
+    if form.is_valid():
+        user = form.save()
+        return JsonResponse({"ok": True, "user": user.username}, status=201)
+    return JsonResponse({"ok": False, "errors": form.errors}, status=400)
+
+
+# ---- LOGOUT (POST) ----
+@login_required(login_url="/login/")
+@require_http_methods(["POST"])
+def logout_ajax(request):
+    logout(request)
+    resp = JsonResponse({"ok": True}, status=200)
+    resp.delete_cookie("last_login")
+    return resp
