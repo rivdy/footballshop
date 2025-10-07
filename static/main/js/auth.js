@@ -1,3 +1,4 @@
+
 // ====================== auth.js ======================
 (function () {
   // --- Ambil endpoints dari #endpoints (kalau ada), kalau tidak pakai default ---
@@ -81,12 +82,5 @@
     });
   });
 
-  // Catatan:
-  // - Pastikan di halaman login/register ada baris:
-  //   <script src="{% static 'main/js/utils.js' %}"></script>
-  //   <script src="{% static 'main/js/auth.js' %}"></script>
-  // - Di base.html sudah ditambahkan:
-  //   <meta name="csrf-token" content="{{ csrf_token }}">
-  // - Kalau mau override redirect:
-  //   <form id="login-form" data-redirect="{% url 'main:show_products' %}">...</form>
+ 
 })();

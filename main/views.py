@@ -50,16 +50,18 @@ def register(request):
 
 def login_user(request):
     if request.method == "POST":
-        form = AuthenticationForm(data=request.POST)
+        # PENTING: sertakan 'request' di argumen pertama
+        form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            # set cookie last_login
+            # set cookie last_login (format rapi, tanpa spasi nyasar)
             response = HttpResponseRedirect(reverse("main:show_products"))
-            response.set_cookie("last_login", timezone.now().strftime("%Y- %m - %d %H:%M"))
+            response.set_cookie("last_login", timezone.now().strftime("%Y-%m-%d %H:%M"))
             return response
     else:
         form = AuthenticationForm(request)
+
     return render(request, "login.html", {"form": form})
 
 def logout_user(request):
@@ -77,8 +79,9 @@ def show_products(request):
     qs = Product.objects.all().select_related("user").order_by("-created_at")
     if filter_type == "my":
         qs = qs.filter(user=request.user)
-    last_login_raw = request.COOKIES.get("last_login", "")
+    last_login_raw = request.COOKIES.get("last_login") or ""
     last_login_fmt = last_login_raw[:16] if last_login_raw else "Never"  # YYYY-mm-dd HH:MM
+
     # === Pagination: 4 produk per halaman ===
     paginator = Paginator(qs, 4)
     page_number = request.GET.get("page", 1)

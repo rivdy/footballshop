@@ -3,20 +3,13 @@
 
 {% block title %}Login — Garuda Football Shop{% endblock %}
 
-{% block extra_head %}
-  {# JS login AJAX (opsional). Hapus baris ini kalau tidak dipakai #}
-  <script src="{% static 'main/js/utils.js' %}"></script>
-  <script src="{% static 'main/js/auth.js' %}"></script>
-{% endblock %}
-
 {% block content %}
 <div class="card" style="max-width:420px;margin:24px auto;">
   <h2 style="margin:0 0 10px">Login</h2>
 
-  <form id="login-form" method="POST" data-redirect="{% url 'main:show_products' %}">
+  <form method="POST" action="">
     {% csrf_token %}
     {{ form.as_p }}
-
     <button class="btn btn-primary" type="submit">Login</button>
   </form>
 
