@@ -1,24 +1,33 @@
 {% extends "base.html" %}
-{% block title %}Register — Garuda Football Shop{% endblock %}
-{% block content %}
+{% load static %}
 
-<article class="card">
+{% block title %}Register — Garuda Football Shop{% endblock %}
+
+{% block extra_head %}
+  <!-- JS opsional untuk AJAX register -->
+  <script src="{% static 'main/js/utils.js' %}"></script>
+  <script src="{% static 'main/js/auth.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<article class="card" style="max-width:520px;margin:24px auto;">
   <h2 class="title" style="margin-bottom:12px">Buat Akun</h2>
-   <script src="{% static 'main/js/auth.js' %}"></script>
+
   {% if messages %}
-    <ul>
+    <ul style="margin:8px 0 16px">
       {% for message in messages %}
         <li>{{ message }}</li>
       {% endfor %}
     </ul>
   {% endif %}
 
-  <form method="post" novalidate>
+  <form id="register-form" method="post" data-redirect="{% url 'main:login' %}" novalidate>
     {% csrf_token %}
     {{ form.as_p }}
-    <div style="display:flex;gap:10px;margin-top:10px">
-      <button class="btn btn-primary" type="submit">Daftar</button>
+
+    <div style="display:flex;gap:10px;margin-top:10px;justify-content:flex-end;">
       <a class="btn" href="{% url 'main:login' %}">Sudah punya akun? Login</a>
+      <button class="btn btn-primary" type="submit">Daftar</button>
     </div>
   </form>
 
@@ -28,5 +37,4 @@
     </div>
   {% endif %}
 </article>
-
-{% endblock content %}
+{% endblock %}
