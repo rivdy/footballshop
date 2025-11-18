@@ -281,3 +281,43 @@ def logout_ajax(request):
     resp = JsonResponse({"ok": True}, status=200)
     resp.delete_cookie("last_login")
     return resp
+# ===================== API UNTUK FLUTTER (TUGAS 9) =====================
+
+@login_required(login_url="/login/")
+@require_http_methods(["GET"])
+def products_flutter(request):
+    """
+    Endpoint LIST untuk Flutter.
+    - Jika query ?filter=my  => hanya produk milik user login
+    - Jika tidak ada / filter=all => semua produk
+    Response: list of product_to_dict(...)
+    """
+    scope = request.GET.get("filter", "all")  # "all" | "my"
+
+    qs = Product.objects.all().select_related("user").order_by("-created_at")
+    if scope == "my":
+        qs = qs.filter(user=request.user)
+
+    data = [product_to_dict(p) for p in qs]
+    # Contoh JSON (list):
+    # [
+    #   {"id": 1, "name": "...", "price": 100000, ...},
+    #   ...
+    # ]
+    return JsonResponse(data, safe=False, status=200)
+
+
+@login_required(login_url="/login/")
+@require_http_methods(["GET"])
+def product_detail_flutter(request, id):
+    """
+    Endpoint DETAIL untuk Flutter.
+    Mengembalikan satu produk dalam bentuk JSON flat.
+    """
+    product = get_object_or_404(Product, pk=id)
+
+    # Opsional: batasi hanya owner atau staff
+    # if getattr(product, "user", None) != request.user and not request.user.is_staff:
+    #     return JsonResponse({"detail": "Forbidden"}, status=403)
+
+    return JsonResponse(product_to_dict(product), status=200)
