@@ -18,6 +18,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.utils import timezone
 from django.contrib.auth import authenticate
+from django.views.decorators.csrf import csrf_exempt
 
 
 # ---------- Auth ----------
@@ -193,8 +194,9 @@ def products_json(request):
 
 
 # ---- CREATE PRODUCT (POST) ----
+@csrf_exempt
 @login_required(login_url="/login/")
-@require_http_methods(["POST"])
+@require_http_methods(["POST", "PATCH"])
 def product_create_ajax(request):
     form = ProductForm(request.POST, request.FILES or None)
     if form.is_valid():
@@ -232,6 +234,7 @@ def product_update_ajax(request, id):
 
 
 # ---- DELETE PRODUCT (POST/DELETE) ----
+@csrf_exempt
 @login_required(login_url="/login/")
 @require_http_methods(["POST", "DELETE"])
 def product_delete_ajax(request, id):

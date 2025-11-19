@@ -783,6 +783,93 @@ Checklist yang dipakai pada proyek ini:
 * View mengembalikan **JSON** (menggunakan `JsonResponse`) dan memeriksa **izin** (owner/staff).
 * Front-end memakai **fetch + CSRF header**, men-render list produk di container, serta modal **Create/Edit/Delete** tanpa reload.
 
+### Tugas 9: Integrasi Layanan Web Django dengan Aplikasi Flutter
+
+1. **Deployment Django**
+
+   * Menyempurnakan `settings.py` (DATABASES, `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`, `STATIC_ROOT`, dsb.).
+   * Deploy proyek ke PBP deployment (`rivaldy-putra-footballshop.pbp.cs.ui.ac.id`).
+   * Memastikan endpoint JSON (`/api/flutter/products/`, `/api/flutter/products/<id>/`) bisa diakses.
+
+2. **Model dan endpoint Django untuk Flutter**
+
+   * Model `Product` di Django berisi `name`, `price`, `description`, `category`, `thumbnail`, `is_featured`, `user`.
+   * View `products_flutter` mengembalikan list produk dalam format JSON.
+   * View `product_detail_flutter` mengembalikan detail satu produk berdasarkan `id`.
+   * View `product_create_ajax` menerima POST produk baru.
+   * View autentikasi: `/auth/login/`, `/auth/register/`, `/auth/logout/`.
+
+3. **Membuat model Dart**
+
+   * `lib/models/product.dart` berisi:
+
+     ```dart
+     class Product { ... }
+     ```
+   * Menyediakan `Product.fromJson(Map<String, dynamic> json)` dan field:
+     `id`, `name`, `price`, `description`, `category`, `thumbnailUrl`, `isFeatured`.
+
+4. **Mendaftarkan CookieRequest di Flutter**
+
+   * Di `main.dart`:
+
+     ```dart
+     runApp(
+       Provider(
+         create: (_) => CookieRequest(),
+         child: const FootballShopApp(),
+       ),
+     );
+     ```
+   * Semua halaman mengakses instance yang sama dengan:
+     `final request = Provider.of<CookieRequest>(context);`
+
+5. **Halaman Register**
+
+   * `RegisterPage` dengan tiga `TextField`.
+   * Tombol Register memanggil `request.post("$baseUrl/auth/register/", ...)`.
+   * Menampilkan `SnackBar` sesuai hasil, dan kembali ke `LoginPage` jika sukses.
+
+6. **Halaman Login**
+
+   * `LoginPage` dengan `TextField` username & password.
+   * Tombol Login memanggil `request.login("$baseUrl/auth/login/", ...)`.
+   * Jika `request.loggedIn == true`, diarahkan ke `MenuPage`.
+
+7. **Integrasi autentikasi Django–Flutter**
+
+   * Setelah login, `CookieRequest` menyimpan cookie session.
+   * Endpoint yang butuh login (misal tambah produk, list “my products”) otomatis membawa cookie ini.
+   * Di Django, `request.user` dipakai untuk menyimpan `Product.user` dan melakukan filter.
+
+8. **Halaman daftar produk (All / My)**
+
+   * `ProductListPage` memanggil:
+
+     * `/api/flutter/products/` untuk **All Products**.
+     * Endpoint khusus atau query yang hanya mengembalikan produk milik user yang login (untuk **My Products**).
+   * Data JSON dipetakan ke list `Product` dan ditampilkan dalam `ListView` dengan `ListTile`.
+
+9. **Halaman detail produk**
+
+   * `ProductDetailPage` menerima `productId`.
+   * Memanggil `/api/flutter/products/<id>/`.
+   * Menampilkan seluruh atribut `Product`.
+   * Menyediakan tombol Back untuk kembali ke daftar.
+
+10. **Tambah produk dari Flutter**
+
+    * `AddProductFormPage` dengan `Form` + `TextFormField`.
+    * Tombol Simpan memanggil `/ajax/products/create/` menggunakan `request.post`.
+    * Setelah sukses, menampilkan `SnackBar` dan kembali ke menu/list produk.
+
+11. **Filter “My Products”**
+
+    * Di Django, endpoint khusus mengembalikan hanya produk dengan `user == request.user`.
+    * Di Flutter, tombol atau tab “My Products” akan memanggil endpoint tersebut dan menampilkan hasilnya.
+
+
+
 ---
 
 
