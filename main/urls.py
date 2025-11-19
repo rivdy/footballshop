@@ -69,9 +69,6 @@ urlpatterns = [
 
     # ====== API UNTUK FLUTTER (TUGAS 9) ======
     path("api/flutter/products/", products_flutter, name="products_flutter"),
-    path(
-        "api/flutter/products/<int:id>/",
-        product_detail_flutter,
-        name="product_detail_flutter",
-    ),
+    path("api/flutter/products/<int:id>/", product_detail_flutter, name="product_detail_flutter"),
+
 ]
