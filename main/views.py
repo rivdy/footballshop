@@ -1,4 +1,3 @@
-# main/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core import serializers
@@ -19,7 +18,7 @@ from django.views.decorators.http import require_http_methods
 from django.utils import timezone
 from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
-
+from django.contrib.auth import get_user_model
 
 # ---------- Auth ----------
 def product_to_dict(p: Product):
@@ -195,23 +194,37 @@ def products_json(request):
 
 # ---- CREATE PRODUCT (POST) ----
 @csrf_exempt
-@login_required(login_url="/login/")
-@require_http_methods(["POST", "PATCH"])
+@require_http_methods(["POST"])
 def product_create_ajax(request):
     form = ProductForm(request.POST, request.FILES or None)
-    if form.is_valid():
-        obj = form.save(commit=False)
-        # pastikan ownership tercatat
-        if hasattr(obj, "user"):
-            obj.user = request.user
-        if hasattr(obj, "updated_by"):
-            obj.updated_by = request.user
-        if hasattr(obj, "created_at") and getattr(obj, "created_at") is None:
-            obj.created_at = timezone.now()
-        obj.save()
-        return JsonResponse({"ok": True, "item": product_to_dict(obj)}, status=201)
-    return JsonResponse({"ok": False, "errors": form.errors}, status=400)
+    if not form.is_valid():
+        return JsonResponse({"ok": False, "errors": form.errors}, status=400)
 
+    obj = form.save(commit=False)
+
+    user = None
+    # Jika dipanggil dari website dan user sudah login biasa
+    if request.user.is_authenticated:
+        user = request.user
+    else:
+        # Jika dipanggil dari Flutter: kirim user_id di form-data
+        user_id = request.POST.get("user_id")
+        if user_id:
+            User = get_user_model()
+            try:
+                user = User.objects.get(pk=user_id)
+            except User.DoesNotExist:
+                user = None
+
+    if hasattr(obj, "user") and user is not None:
+        obj.user = user
+    if hasattr(obj, "updated_by") and user is not None:
+        obj.updated_by = user
+    if hasattr(obj, "created_at") and getattr(obj, "created_at", None) is None:
+        obj.created_at = timezone.now()
+
+    obj.save()
+    return JsonResponse({"ok": True, "item": product_to_dict(obj)}, status=201)
 
 # ---- UPDATE PRODUCT (POST/PATCH) ----
 @login_required(login_url="/login/")
@@ -234,7 +247,7 @@ def product_update_ajax(request, id):
 
 
 # ---- DELETE PRODUCT (POST/DELETE) ----
-@csrf_exempt
+
 @login_required(login_url="/login/")
 @require_http_methods(["POST", "DELETE"])
 def product_delete_ajax(request, id):
